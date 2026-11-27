@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ReactElement, useEffect } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { rectWithPoints } from '../util/CartesianUtils';
 import { Overflowable } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
@@ -14,15 +15,17 @@ import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
-import { NullableCoordinate, RectanglePosition } from '../util/types';
+import { Coordinate, RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -31,6 +34,14 @@ interface ReferenceAreaProps<
   YValueType extends ReferenceCoordinateValue = any,
 >
   extends Overflowable, ZIndexable {
+  /**
+   * The fill of the area. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * If the fill object has no `color`, the definition gets the theme color.
+   *
+   * @example <ReferenceArea x1={1} x2={3} fill={{ color: '#ccc', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * Starting X-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -101,12 +112,14 @@ interface ReferenceAreaProps<
    *
    * - `false`: no labels are rendered
    * - `string` | `number`: the content of the label
-   * - `object`: the props of LabelList component
+   * - `object`: the props of a single Label component, such as `value` and `position`
    * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
    *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label
    *
    * @defaultValue false
+   *
+   * @example <ReferenceArea x1={10} x2={20} label={{ value: 'Target', position: 'insideTop' }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
    */
@@ -130,11 +143,22 @@ interface ReferenceAreaProps<
  * Omit width, height, x, y from SVGPropsAndEvents because ReferenceArea receives x1, x2, y1, y2 instead.
  * The position is calculated internally instead.
  */
+/**
+ * @public
+ */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
-> = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y'> &
+> = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y' | 'fill'> &
   ReferenceAreaProps<XValueType, YValueType>;
+
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+const toCoordinate = (x: number | undefined, y: number | undefined): Coordinate | null =>
+  isWellBehavedNumber(x) && isWellBehavedNumber(y) ? { x, y } : null;
 
 const getRect = (
   hasX1: boolean,
@@ -151,24 +175,38 @@ const getRect = (
     return null;
   }
 
-  const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
-
-  const p1: NullableCoordinate = {
-    x: hasX1 ? (xAxisScale.map(xValue1, { position: 'start' }) ?? null) : xAxisScale.rangeMin(),
-    y: hasY1 ? (yAxisScale.map(yValue1, { position: 'start' }) ?? null) : yAxisScale.rangeMin(),
-  };
-
-  const p2: NullableCoordinate = {
-    x: hasX2 ? (xAxisScale.map(xValue2, { position: 'end' }) ?? null) : xAxisScale.rangeMax(),
-    y: hasY2 ? (yAxisScale.map(yValue2, { position: 'end' }) ?? null) : yAxisScale.rangeMax(),
-  };
-
-  if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
+  if (Number.isNaN(xValue1) || Number.isNaN(xValue2) || Number.isNaN(yValue1) || Number.isNaN(yValue2)) {
     return null;
   }
 
-  // @ts-expect-error we're sending nullable coordinates but rectWithPoints expects non-nullable Coordinate
-  return rectWithPoints(p1, p2);
+  const p1 = toCoordinate(
+    hasX1 ? xAxisScale.map(xValue1, { position: 'start' }) : xAxisScale.rangeMin(),
+    hasY1 ? yAxisScale.map(yValue1, { position: 'start' }) : yAxisScale.rangeMin(),
+  );
+
+  const p2 = toCoordinate(
+    hasX2 ? xAxisScale.map(xValue2, { position: 'end' }) : xAxisScale.rangeMax(),
+    hasY2 ? yAxisScale.map(yValue2, { position: 'end' }) : yAxisScale.rangeMax(),
+  );
+
+  // don't render the area if the scale can't compute a result that makes sense
+  if (p1 == null || p2 == null) {
+    return null;
+  }
+
+  if (props.ifOverflow === 'discard') {
+    const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
+    if (!scales.isInRange(p1) || !scales.isInRange(p2)) {
+      return null;
+    }
+  }
+
+  const rect = rectWithPoints(p1, p2);
+  if (!isWellBehavedNumber(rect.width) || !isWellBehavedNumber(rect.height)) {
+    return null;
+  }
+
+  return rect;
 };
 
 const renderRect = (option: ReferenceAreaProps['shape'], props: SVGPropsAndEvents<RectangleProps>) => {
@@ -197,7 +235,12 @@ function ReportReferenceArea(props: ReferenceAreaSettings): null {
   return null;
 }
 
-function ReferenceAreaImpl(props: PropsWithDefaults) {
+function ReferenceAreaImpl(
+  props: PropsWithDefaults & {
+    paintFill: string | undefined;
+    renderFillDefinition: (bounds: { width: number; height: number } | undefined) => React.ReactNode;
+  },
+) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
   const isPanorama = useIsPanorama();
@@ -222,13 +265,18 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
     return null;
   }
 
+  // the definition paints this one rectangle
+  const fillDefinition = props.renderFillDefinition(
+    rect == null ? undefined : { width: Math.abs(rect.width), height: Math.abs(rect.height) },
+  );
   const isOverflowHidden = props.ifOverflow === 'hidden';
   const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={clsx('recharts-reference-area', className)}>
-        {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
+        {fillDefinition != null && <defs>{fillDefinition}</defs>}
+        {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), fill: props.paintFill, ...rect })}
         {rect != null && (
           <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
             <CartesianLabelFromLabelProp label={props.label} />
@@ -249,14 +297,14 @@ export const referenceAreaDefaultProps = {
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceAreaThemeProps: Styles2D = {
+const defaultLegacyReferenceAreaThemeProps: ColorStyles2D = {
   fill: '#ccc',
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
 };
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
+type PropsWithDefaults = RequiresDefaultProps<StringFillProps, typeof referenceAreaDefaultProps>;
 
 /**
  * Draws a rectangular area on the chart to highlight a specific range.
@@ -271,17 +319,27 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefault
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceArea<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
->(outsideProps: Props<XValueType, YValueType>) {
+>(propsWithFillObject: Props<XValueType, YValueType>) {
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: splitFill(propsWithFillObject.fill).color };
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceAreaThemeProps,
   );
   const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, ...themeProps }, referenceAreaDefaultProps);
+  // Without a fill of its own, the area paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.reference);
+  const { paint, renderDefinition } = useFillPaint(
+    propsWithFillObject.fill ?? themeFillObject,
+    props.fill,
+    'recharts-reference-area-fill',
+  );
   return (
     <>
       <ReportReferenceArea
@@ -293,7 +351,7 @@ export function ReferenceArea<
         y1={props.y1}
         y2={props.y2}
       />
-      <ReferenceAreaImpl {...props} />
+      <ReferenceAreaImpl {...props} paintFill={paint} renderFillDefinition={renderDefinition} />
     </>
   );
 }

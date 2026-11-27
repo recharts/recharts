@@ -11,4 +11,5 @@ export const expectedInBundle = [
   'Tooltip',
   'ZIndexLayer',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;

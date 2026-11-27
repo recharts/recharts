@@ -141,7 +141,7 @@ const MyTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => (
   <Tooltip wrapperStyle={{ zIndex: 100 }} content={RenderTooltip} defaultIndex={defaultIndex} />
 );
 
-const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} dataKey="value" />;
+const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} />;
 
 const DayChart = ({ children }: { children: ReactNode }) => (
   <ScatterChart

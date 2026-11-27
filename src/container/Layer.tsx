@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNode, SVGAttributes } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface LayerProps {
@@ -8,6 +8,9 @@ interface LayerProps {
   children?: ReactNode;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGAttributes<SVGGElement> & LayerProps;
 
 /**
@@ -17,6 +20,7 @@ export type Props = SVGAttributes<SVGGElement> & LayerProps;
  * without affecting other elements in the SVG.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/g
+ * @public
  */
 export const Layer = React.forwardRef<SVGGElement, Props>((props: Props, ref) => {
   const { children, className, ...others } = props;

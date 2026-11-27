@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, expect, test, it } from 'vitest';
-import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Brush, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import {
   getErrorDomainByDataKey,
@@ -12,6 +12,7 @@ import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type ExpectedErrorBarLine = {
   x1: string;
@@ -2307,6 +2308,398 @@ describe('<ErrorBar />', () => {
           },
         ]);
       });
+    });
+
+    describe('extending the value axis domain for stacked Bars', () => {
+      type StackDatum = { name: string; bottom: number; top: number; err: [number, number] };
+
+      // The stack of 'a' ends at 20 and its error reaches 50 above the end of a segment. The stack of 'b' ends at 30.
+      const stackData: ReadonlyArray<StackDatum> = [
+        { name: 'a', bottom: 10, top: 10, err: [5, 50] },
+        { name: 'b', bottom: 10, top: 20, err: [5, 5] },
+      ];
+
+      const renderStackedBars = (
+        bottomErrorBar: React.ReactNode,
+        topErrorBar: React.ReactNode,
+        brush?: React.ReactNode,
+      ) =>
+        createSelectorTestCase(({ children }) => (
+          <BarChart data={stackData} width={400} height={300}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar isAnimationActive={false} dataKey="bottom" stackId="s">
+              {bottomErrorBar}
+            </Bar>
+            <Bar isAnimationActive={false} dataKey="top" stackId="s">
+              {topErrorBar}
+            </Bar>
+            {brush}
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'yAxis', 0, false));
+
+      test('should extend the YAxis domain to an ErrorBar on the top segment of a stack', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" />);
+        expectLastCalledWith(spy, [0, 70]);
+      });
+
+      test('should measure an ErrorBar on the bottom segment from the end of that segment', () => {
+        const { spy } = renderStackedBars(<ErrorBar dataKey="err" />, null);
+        expectLastCalledWith(spy, [0, 60]);
+      });
+
+      test('should not extend the YAxis domain to an ErrorBar in the x direction', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" direction="x" />);
+        expectLastCalledWith(spy, [0, 30]);
+      });
+
+      test('should only count the ErrorBars inside the Brush range', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" />, <Brush startIndex={1} />);
+        expectLastCalledWith(spy, [0, 35]);
+      });
+
+      test('should extend the YAxis domain when the stacked Bars have their own data', () => {
+        const { spy } = createSelectorTestCase(({ children }) => (
+          <BarChart width={400} height={300}>
+            <XAxis dataKey="name" allowDuplicatedCategory={false} />
+            <YAxis />
+            <Bar isAnimationActive={false} data={stackData} dataKey="bottom" stackId="s" />
+            <Bar isAnimationActive={false} data={stackData} dataKey="top" stackId="s">
+              <ErrorBar dataKey="err" />
+            </Bar>
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'yAxis', 0, false));
+        expectLastCalledWith(spy, [0, 70]);
+      });
+
+      test('should extend the XAxis domain in a vertical chart', () => {
+        const { spy } = createSelectorTestCase(({ children }) => (
+          <BarChart data={stackData} width={400} height={300} layout="vertical">
+            <XAxis type="number" />
+            <YAxis type="category" dataKey="name" />
+            <Bar isAnimationActive={false} dataKey="bottom" stackId="s" />
+            <Bar isAnimationActive={false} dataKey="top" stackId="s">
+              <ErrorBar dataKey="err" />
+            </Bar>
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'xAxis', 0, false));
+        expectLastCalledWith(spy, [0, 70]);
+      });
+    });
+  });
+
+  describe('with numeric strings in the data', () => {
+    type Row = { name: string; uv: number | string; err: number | string | ReadonlyArray<number | string> };
+    const numbers: ReadonlyArray<Row> = [
+      { name: 'a', uv: 10, err: 2 },
+      { name: 'b', uv: 20, err: [4, 1] },
+    ];
+    const numericStrings: ReadonlyArray<Row> = [
+      { name: 'a', uv: '10', err: '2' },
+      { name: 'b', uv: '20', err: ['4', '1'] },
+    ];
+
+    it.each([
+      ['numbers', numbers],
+      ['numeric strings', numericStrings],
+    ])('should draw the same whiskers on a Line for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 30]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      // a: 10 - 2 to 10 + 2, b: 20 - 4 to 20 + 1
+      expectErrorBars(container, [
+        { x1: '60', x2: '70', y1: '161', y2: '161' },
+        { x1: '65', x2: '65', y1: '195.66666666666669', y2: '161' },
+        { x1: '60', x2: '70', y1: '195.66666666666669', y2: '195.66666666666669' },
+        { x1: '390', x2: '400', y1: '83.00000000000001', y2: '83.00000000000001' },
+        { x1: '395', x2: '395', y1: '126.33333333333334', y2: '83.00000000000001' },
+        { x1: '390', x2: '400', y1: '126.33333333333334', y2: '126.33333333333334' },
+      ]);
+    });
+
+    it.each([
+      ['numbers', numbers],
+      ['numeric strings', numericStrings],
+    ])('should draw the same whiskers on a vertical Bar for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" domain={[0, 30]} />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+      const { container } = renderTestCase();
+      expectErrorBars(container, [
+        { x1: '197', x2: '197', y1: '75', y2: '65' },
+        { x1: '153', x2: '197', y1: '70', y2: '70' },
+        { x1: '153', x2: '153', y1: '75', y2: '65' },
+        { x1: '296', x2: '296', y1: '205', y2: '195' },
+        { x1: '241', x2: '296', y1: '200', y2: '200' },
+        { x1: '241', x2: '241', y1: '205', y2: '195' },
+      ]);
+    });
+
+    const oneNumber: ReadonlyArray<Row> = [{ name: 'a', uv: 10, err: 50 }];
+    const oneNumericString: ReadonlyArray<Row> = [{ name: 'a', uv: '10', err: '50' }];
+
+    it.each([
+      ['numbers', oneNumber],
+      ['numeric strings', oneNumericString],
+    ])('should extend the YAxis domain by the error values for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      // 10 - 50 and 10 + 50
+      expectLastCalledWith(spy, [-40, 60]);
+    });
+
+    it.each([
+      ['a number', 0],
+      ['a numeric string', '0'],
+    ])('should draw no whisker for a zero error given as %s', (_name, zero) => {
+      const data: ReadonlyArray<Row> = [
+        { name: 'a', uv: 10, err: zero },
+        { name: 'b', uv: 20, err: 2 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 30]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      // only b: 20 - 2 to 20 + 2
+      expectErrorBars(container, [
+        { x1: '390', x2: '400', y1: '74.33333333333336', y2: '74.33333333333336' },
+        { x1: '395', x2: '395', y1: '109', y2: '74.33333333333336' },
+        { x1: '390', x2: '400', y1: '109', y2: '109' },
+      ]);
+    });
+  });
+
+  describe('clipping', () => {
+    // the first and the last whisker reach outside of the YAxis domain [0, 100]
+    const data = [
+      { x: 1, uv: 90, err: 30 },
+      { x: 2, uv: 50, err: 10 },
+      { x: 3, uv: 10, err: 30 },
+    ];
+
+    function getItemClipPathUrl(container: HTMLElement, itemSelector: string): string {
+      const item = container.querySelector(itemSelector);
+      assertNotNull(item);
+      const clipPath = item.querySelector('clipPath');
+      assertNotNull(clipPath);
+      return `url(#${clipPath.getAttribute('id')})`;
+    }
+
+    function getErrorBarClipPaths(container: HTMLElement): ReadonlyArray<string | null | undefined> {
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(data.length);
+      return Array.from(errorBars).map(errorBar => errorBar.closest('[clip-path]')?.getAttribute('clip-path'));
+    }
+
+    it('should not clip ErrorBars when the axes do not allow data overflow', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      expect(getErrorBarClipPaths(container)).toEqual([undefined, undefined, undefined]);
+    });
+
+    it('should clip ErrorBars in Line with the clip path of the Line', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-line');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
+    });
+
+    it('should clip ErrorBars in Bar with the clip path of the Bar', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-bar');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
+    });
+
+    it('should clip ErrorBars in Scatter with the clip path of the Scatter', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={400} height={300}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="uv" domain={[0, 100]} allowDataOverflow />
+          <Scatter data={data} isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-scatter');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
+    });
+  });
+
+  describe('non-finite and unmappable coordinates', () => {
+    it('should skip whiskers whose bounds map to NaN on a log YAxis', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 15 },
+        { name: 'b', uv: 10, err: 10 },
+        { name: 'c', uv: 100, err: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis scale="log" domain={[1, 1000]} allowDataOverflow />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+
+      const { container } = renderTestCase();
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(1);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(3);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should skip whiskers whose bounds map to NaN on a log XAxis in vertical layout', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 15 },
+        { name: 'b', uv: 100, err: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+
+      const { container } = renderTestCase();
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(1);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(3);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should skip whiskers when Scatter data points or error bounds map to NaN on a log scale', () => {
+      const data = [
+        { x: 0, y: 100, errX: 2, errY: 20 },
+        { x: 100, y: 0, errX: 20, errY: 2 },
+        { x: 10, y: 10, errX: 15, errY: 15 },
+        { x: 100, y: 100, errX: 20, errY: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={400} height={300}>
+          <XAxis type="number" dataKey="x" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <YAxis type="number" dataKey="y" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <Scatter data={data} isAnimationActive={false}>
+            <ErrorBar dataKey="errX" direction="x" isAnimationActive={false} />
+            <ErrorBar dataKey="errY" direction="y" isAnimationActive={false} />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+
+      const { container } = renderTestCase();
+      // Only the last point (x=100, y=100) has finite coordinates and finite error bounds on both axes
+      expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(2);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(6);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should not render empty errorBar layers when direction=y is used on a category YAxis', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 2 },
+        { name: 'b', uv: 20, err: 4 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" direction="y" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+
+      const { container } = renderTestCase();
+      expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(0);
+      expectErrorBars(container, []);
     });
   });
 });

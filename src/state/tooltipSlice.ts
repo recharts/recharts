@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
@@ -22,10 +22,16 @@ export type TooltipPayloadEntry = Payload<ValueType, NameType>;
  */
 export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'> & {
   nameKey: DataKey<any> | undefined;
+  /**
+   * Line, Area and Radar draw one shape per series, so their Tooltip shows the series color
+   * instead of the colors of the active data entry.
+   */
+  ignoreDataEntryColors?: boolean;
 };
 
 /**
  * This is what Tooltip renders.
+ * @public
  */
 export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
 
@@ -35,6 +41,7 @@ export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
  * Different charts have different requirements on data shapes,
  * and are also responsible for providing a function that will accept this index
  * and return data.
+ * @public
  */
 export type TooltipIndex = string | null;
 
@@ -78,6 +85,14 @@ export type TooltipPayloadConfiguration = {
    * They however should reuse the same tooltip index format as the chart data.
    */
   getPosition: (tooltipIndex: NonNullable<TooltipIndex>) => Coordinate | undefined;
+  /**
+   * Opportunity for the graphical item to report the color it renders the active data entry with,
+   * for graphical items that read styles from the data entries and resolve them in their own way.
+   *
+   * If undefined, the Tooltip uses the `color`, `fill` or `stroke` of the active data entry,
+   * and then the color from `settings`.
+   */
+  getEntryColor?: (entry: unknown) => string | undefined;
 };
 
 export type ActiveTooltipProps = {
@@ -473,4 +488,4 @@ export const {
   setKeyboardInteraction,
 } = tooltipSlice.actions;
 
-export const tooltipReducer = tooltipSlice.reducer;
+export const tooltipReducer: Reducer<TooltipState> = tooltipSlice.reducer;

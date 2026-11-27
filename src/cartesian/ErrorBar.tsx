@@ -10,6 +10,8 @@ import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
+import { makeNumber } from '../state/selectors/axisSelectors';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -34,6 +36,7 @@ export interface ErrorBarDataItem {
  * Except! In Scatter chart, error bars can go both ways.
  *
  * So this property is only ever used in Scatter chart, and ignored elsewhere.
+ * @public
  */
 export type ErrorBarDirection = 'x' | 'y';
 
@@ -101,6 +104,9 @@ interface ErrorBarProps<DataPointType = any, DataValueType = any> extends ZIndex
   zIndex?: number;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 /**
@@ -134,7 +140,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   } = props;
   const svgProps = svgPropertiesNoEvents(others);
 
-  const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset } = useErrorBarContext();
+  const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset, clipPath } = useErrorBarContext();
 
   const xAxis = useXAxis(xAxisId);
   const yAxis = useYAxis(yAxisId);
@@ -151,22 +157,28 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   const errorBars = data.map((entry: any, dataIndex: number) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey, direction);
 
-    if (!errorVal || x == null || y == null) {
+    if (!errorVal || !isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
       return null;
     }
 
     const lineCoordinates: Array<RectangleCoordinate> = [];
-    let lowBound: number, highBound: number;
+    let lowBound: number | undefined, highBound: number | undefined;
 
+    // numeric strings from the data would be concatenated by `value + highBound`
     if (Array.isArray(errorVal)) {
       const [low, high] = errorVal;
-      if (low == null || high == null) {
+      lowBound = makeNumber(low);
+      highBound = makeNumber(high);
+    } else {
+      lowBound = highBound = makeNumber(errorVal);
+      if (lowBound === 0) {
+        // a string '0' draws nothing, like a numeric 0
         return null;
       }
-      lowBound = low;
-      highBound = high;
-    } else {
-      lowBound = highBound = errorVal;
+    }
+    const numericValue = makeNumber(value);
+    if (lowBound == null || highBound == null || numericValue == null) {
+      return null;
     }
 
     if (direction === 'x') {
@@ -177,10 +189,10 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = yMid + width;
       const yMax = yMid - width;
 
-      const xMin = scale.map(value - lowBound);
-      const xMax = scale.map(value + highBound);
+      const xMin = scale.map(numericValue - lowBound);
+      const xMax = scale.map(numericValue + highBound);
 
-      if (xMin != null && xMax != null) {
+      if (isWellBehavedNumber(xMin) && isWellBehavedNumber(xMax)) {
         // the right line of |--|
         lineCoordinates.push({ x1: xMax, y1: yMin, x2: xMax, y2: yMax });
         // the middle line of |--|
@@ -196,10 +208,10 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = xMid - width;
       const xMax = xMid + width;
 
-      const yMin = scale.map(value - lowBound);
-      const yMax = scale.map(value + highBound);
+      const yMin = scale.map(numericValue - lowBound);
+      const yMax = scale.map(numericValue + highBound);
 
-      if (yMin != null && yMax != null) {
+      if (isWellBehavedNumber(yMin) && isWellBehavedNumber(yMax)) {
         // the top line
         lineCoordinates.push({ x1: xMin, y1: yMax, x2: xMax, y2: yMax });
         // the middle line
@@ -207,6 +219,10 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
         // the bottom line
         lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
       }
+    }
+
+    if (lineCoordinates.length === 0) {
+      return null;
     }
 
     const scaleDirection: string = direction === 'x' ? 'scaleX' : 'scaleY';
@@ -237,7 +253,11 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     );
   });
 
-  return <Layer className="recharts-errorBars">{errorBars}</Layer>;
+  return (
+    <Layer className="recharts-errorBars" clipPath={clipPath}>
+      {errorBars}
+    </Layer>
+  );
 }
 
 function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined): ErrorBarDirection {
@@ -287,6 +307,7 @@ export const errorBarDefaultProps = {
  * as the reference point for calculating the error bar positions.
  *
  * @consumes ErrorBarContext
+ * @public
  */
 export function ErrorBar(outsideProps: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);

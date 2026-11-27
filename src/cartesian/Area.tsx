@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
-import { clsx } from 'clsx';
+import { once } from 'es-toolkit';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
@@ -8,8 +8,10 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
+import { getLegendPayloadDot, getNoDotsLegendType } from '../shape/DotSymbol';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
@@ -23,7 +25,7 @@ import {
   ActiveShape,
   AnimationDuration,
   CartesianLayout,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -34,6 +36,7 @@ import {
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
+import { clsx } from '../util/clsx';
 import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { Formatter } from '../component/DefaultTooltipContent';
@@ -68,13 +71,25 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
+import { useThemedActiveStyles } from '../theme/activeStyles';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 /**
  * @inline
+ * @public
  */
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -87,6 +102,16 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
+  /**
+   * The base color of the area.
+   */
+  fill?: string;
+  /**
+   * The fill object of the area, from props or from the theme. The area shape paints with its definition.
+   */
+  fillObject?: RechartsFill;
+  unthemedColors?: UnthemedColors;
+  themedActiveStyles?: ColorStyles2D;
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -99,7 +124,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey?: DataKey<any>;
   dot: DotType;
   dotFill?: string;
   height: number;
@@ -144,20 +169,41 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends Styles2D, DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
+  extends
+    Omit<ColorStyles2D, 'fill'>,
+    DataProvider<DataPointType>,
+    ValueAxisDataConsumer<DataPointType, DataValueType>,
+    ZIndexable {
+  /**
+   * The fill of the area. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icon.
+   * Tooltip, labels, and dots use the solid `color` of the fill object.
+   * If the fill object has no `color`, the area keeps the theme colors and the definition gets the theme color.
+   *
+   * @example <Area fill="blue" />
+   * @example <Area fill={{ definition: pattern(patterns.diagonal) }} />
+   * @example <Area fill={{ color: 'blue', definition: linearGradient(gradients.fadeDown) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
    * - `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)
    * - `true`: renders the active dot with default settings
-   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
+   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle
    * - `ReactElement`: the custom active dot element
    * - `function`: a render function of the custom active dot
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`
    *
    * @defaultValue true
    * @example <Area dataKey="value" activeDot={false} />
    * @example <Area dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
    * @example <Area dataKey="value" activeDot={CustomizedActiveDot} />
+   * @example <Area dataKey="value" activeDot="diamond" />
+   * @example <Area dataKey="value" activeDot={{ symbol: 'diamond', r: 8 }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
    */
@@ -239,13 +285,19 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    */
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
-   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
    * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
+   *   The legend icon shows the same symbol.
+   *   To change the size of the symbol, use the object form with `symbol` and `r`.
    *
    * @defaultValue false
    */
@@ -291,6 +343,11 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
   /**
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
+   *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   * The `line` icon draws it in the middle of the line.
+   * With a theme, it draws the default dots too, and a plain line when there are no dots.
+   *
    * @defaultValue 'line'
    */
   legendType?: LegendType;
@@ -407,7 +464,7 @@ const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLa
 /**
  * Default styling that was applied before themes existed
  */
-const defaultLegacyThemeProps: GraphicalItemStyle = {
+const defaultLegacyThemeProps: ColorGraphicalItemStyle = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   stroke: '#3182bd',
@@ -439,15 +496,25 @@ export const defaultAreaProps = {
  */
 type AreaSvgProps = Omit<
   CurveProps,
-  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML'
+  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML' | 'fill'
 >;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType, ValueAxisType> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps<DataPointType, ValueAxisType> = Omit<Props<DataPointType, ValueAxisType>, 'fill'> & {
+  fill?: string;
+};
+
 type PropsWithDefaults<DataPointType, ValueAxisType> = WithIdRequired<
-  RequiresDefaultProps<Props<DataPointType, ValueAxisType>, typeof defaultAreaProps>
+  RequiresDefaultProps<StringFillProps<DataPointType, ValueAxisType>, typeof defaultAreaProps>
 >;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
@@ -455,15 +522,20 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 }
 
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
-  props: Props<DataPointType, ValueAxisType>,
+  props: StringFillProps<DataPointType, ValueAxisType>,
+  dotFill: string | undefined,
+  isThemed: boolean,
+  fillObject: RechartsFill | undefined,
 ): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, fill, legendType, hide } = props;
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, isThemed),
       color: getLegendItemColor(stroke, fill),
+      fill: fillObject,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
@@ -484,7 +556,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: Pick<
-    WithIdRequired<Props<DataPointType, ValueAxisType>>,
+    WithIdRequired<StringFillProps<DataPointType, ValueAxisType>>,
     | 'dataKey'
     | 'data'
     | 'stroke'
@@ -513,6 +585,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -543,7 +616,7 @@ function AreaDotsWrapper({
   points: ReadonlyArray<AreaPointItem>;
   props: WithoutId<InternalProps>;
 }) {
-  const { needClip, dot, dataKey, dotFill, ...propsWithoutDotFill } = props;
+  const { needClip, dot, dataKey, dotFill, unthemedColors, ...propsWithoutDotFill } = props;
   const areaProps: DotsDotProps = svgPropertiesNoEvents(propsWithoutDotFill);
 
   return (
@@ -554,12 +627,16 @@ function AreaDotsWrapper({
       dotClassName="recharts-area-dot"
       dataKey={dataKey}
       baseProps={{ ...areaProps, fill: dotFill ?? areaProps.fill }}
+      unthemedColors={unthemedColors}
       needClip={needClip}
       clipPathId={clipPathId}
     />
   );
 }
 
+/**
+ * Shares lazily built label entries for each points array, hiding them while labels are disabled during animation.
+ */
 function AreaLabelListProvider({
   showLabels,
   children,
@@ -569,27 +646,32 @@ function AreaLabelListProvider({
   children: ReactNode;
   points: ReadonlyArray<AreaPointItem>;
 }) {
-  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
-    const viewBox: TrapezoidViewBox = {
-      x: point.x ?? 0,
-      y: point.y ?? 0,
-      width: 0,
-      lowerWidth: 0,
-      upperWidth: 0,
-      height: 0,
-    };
-    return {
-      ...viewBox,
-      value: point.value,
-      payload: point.payload,
-      parentViewBox: undefined,
-      viewBox,
-      fill: undefined,
-    };
-  });
-
+  const getLabelListEntries = useMemo(
+    () =>
+      once(() =>
+        points.map((point): CartesianLabelListEntry => {
+          const viewBox: TrapezoidViewBox = {
+            x: point.x ?? 0,
+            y: point.y ?? 0,
+            width: 0,
+            lowerWidth: 0,
+            upperWidth: 0,
+            height: 0,
+          };
+          return {
+            ...viewBox,
+            value: point.value,
+            payload: point.payload,
+            parentViewBox: undefined,
+            viewBox,
+            fill: undefined,
+          };
+        }),
+      ),
+    [points],
+  );
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
+    <CartesianLabelListContextProvider value={showLabels ? getLabelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
@@ -621,6 +703,7 @@ function StaticArea({
 
   const curveProps: AreaRevealShapeProps = {
     ...propsWithEvents,
+    fill: props.fillObject == null ? propsWithEvents.fill : getFillUrl(getSeriesFillId(id)),
     id,
     points,
     connectNulls,
@@ -804,10 +887,16 @@ class AreaWithState extends PureComponent<InternalProps> {
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
     const activePointsClipPath = needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined;
+    const { fillObject, fill } = this.props;
 
     return (
       <ZIndexLayer zIndex={zIndex}>
         <Layer className={layerClass}>
+          {fillObject != null && (
+            <defs>
+              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            </defs>
+          )}
           {needClip && (
             <defs>
               <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -823,7 +912,9 @@ class AreaWithState extends PureComponent<InternalProps> {
               )}
             </defs>
           )}
-          <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          </SetLabelListClipArea>
         </Layer>
         <ActivePoints
           points={points}
@@ -831,6 +922,7 @@ class AreaWithState extends PureComponent<InternalProps> {
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
         {this.props.isRange && Array.isArray(baseLine) && (
           <ActivePoints
@@ -839,6 +931,7 @@ class AreaWithState extends PureComponent<InternalProps> {
             itemDataKey={this.props.dataKey}
             activeDot={this.props.activeDot}
             clipPath={activePointsClipPath}
+            themedActiveStyles={this.props.themedActiveStyles}
           />
         )}
       </ZIndexLayer>
@@ -847,7 +940,8 @@ class AreaWithState extends PureComponent<InternalProps> {
 }
 
 function AreaImpl<DataPointType, ValueAxisType>(
-  props: PropsWithDefaults<DataPointType, ValueAxisType> & Pick<InternalProps, 'dotFill'>,
+  props: PropsWithDefaults<DataPointType, ValueAxisType> &
+    Pick<InternalProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles' | 'fillObject'>,
 ) {
   const {
     activeDot,
@@ -1072,30 +1166,37 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props<any, any>) {
+function AreaFn(propsWithFillObject: Props<any, any>) {
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps = { ...propsWithFillObject, fill: fillColor };
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
-  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultAreaProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultAreaProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const themeFillObject = useGraphicalItemThemeFill(dataKey, outsideProps);
+  const effectiveFillObject = fillObject ?? themeFillObject;
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const theme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
-  const activeDot =
-    theme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
-      ? outsideProps.activeDot
-      : {
-          ...theme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
-  const propsWithTheme: Props<any, any> = {
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
+  const propsWithTheme: StringFillProps<any, any> = {
     ...outsideProps,
     ...theme,
-    activeDot,
+    dataKey,
+    activeDot: outsideProps.activeDot,
+    // with a theme, an area without dots has no dot in its legend icon either
+    legendType:
+      outsideProps.legendType ?? getNoDotsLegendType(outsideProps.dot ?? defaultAreaProps.dot, rechartsTheme != null),
   };
-  const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
+  const props: RequiresDefaultProps<StringFillProps<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,
     defaultAreaProps,
   );
@@ -1103,11 +1204,14 @@ function AreaFn(outsideProps: Props<any, any>) {
     outsideProps.fill ?? (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, theme?.fill));
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
+  const labelColors = useSeriesDataLabelColors(getLegendItemColor(props.stroke, props.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetLegendPayload
+            legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null, effectiveFillObject)}
+          />
           <SetAreaTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}
@@ -1136,7 +1240,18 @@ function AreaFn(outsideProps: Props<any, any>) {
             isPanorama={isPanorama}
             connectNulls={props.connectNulls}
           />
-          <AreaImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <DataLabelColorsContextProvider value={labelColors}>
+              <AreaImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                fillObject={effectiveFillObject}
+                unthemedColors={unthemedColors}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>
@@ -1146,6 +1261,7 @@ function AreaFn(outsideProps: Props<any, any>) {
 /**
  * @provides LabelListContext
  * @consumes CartesianChartContext
+ * @public
  */
 export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
   props: Props<DataPointType, ValueAxisType>,

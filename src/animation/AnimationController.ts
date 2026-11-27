@@ -9,6 +9,7 @@ import { AnimationHandle } from './AnimationHandle';
  * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export type OnAnimationStateUpdate = (newState: number | string) => void;
 
@@ -25,6 +26,7 @@ export type OnAnimationStateUpdate = (newState: number | string) => void;
  * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export type AnimationController = (
   timeoutController: TimeoutController,

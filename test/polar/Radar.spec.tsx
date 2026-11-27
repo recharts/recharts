@@ -6,6 +6,7 @@ import {
   DefaultZIndexes,
   InternalRadarProps,
   PolarAngleAxis,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
   RadarPoint,
@@ -15,7 +16,7 @@ import {
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { exampleRadarData } from '../_data';
-import { expectRadarPolygons } from '../helper/expectRadarPolygons';
+import { expectRadarPolygons, getRadarDots } from '../helper/expectRadarPolygons';
 import { RadarSettings } from '../../src/state/types/RadarSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -24,6 +25,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
 import { selectPolarAngleAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
 import { selectRadarPoints } from '../../src/state/selectors/radarSelectors';
+import { selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 
 type Point = { x?: number | string; y?: number | string };
@@ -99,9 +101,9 @@ describe('<Radar />', () => {
       direction: 'counter-clockwise',
       startAngle: -270,
       endAngle: 90,
-      expectedAngles: [-315, -270, -225, -180, -135, -90, -45, 0],
+      expectedAngles: [-270, -225, -180, -135, -90, -45, 0, 45],
       expectedPolygon:
-        'M308.209,191.791L250,159.84L111.5457,111.5457L152,250L130.2557,369.7443L250,377.4L356.0236,356.0236L321.54,250L308.209,191.791Z',
+        'M250,167.68L186.2473,186.2473L54.196,250L180.7035,319.2965L250,419.344L340.0854,340.0854L399.94,250L300.5864,199.4136L250,167.68Z',
     },
   ])('in a chart rotating $direction', ({ startAngle, endAngle, expectedAngles, expectedPolygon }) => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -126,10 +128,43 @@ describe('<Radar />', () => {
       expect(radarPoints.points.map(point => [point.name, point.angle])).toEqual(expected);
     });
 
+    it('should put the first category on startAngle', () => {
+      const ticks = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', defaultAxisId, false)).spy
+        .mock.lastCall?.[0];
+      assertNotNull(ticks);
+
+      expect(ticks[0]?.coordinate).toBe(startAngle);
+    });
+
     it('should render a polygon', () => {
       const { container } = renderTestCase();
 
       expectRadarPolygons(container, [{ d: expectedPolygon, fill: null, fillOpacity: null }]);
+    });
+  });
+
+  describe('with a reversed angle axis', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <PolarAngleAxis dataKey="name" reversed />
+        <Radar dataKey="value" isAnimationActive={false} />
+        {children}
+      </RadarChart>
+    ));
+
+    it('should give the tooltip the same ticks as the angle axis', () => {
+      const axisTicks = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', defaultAxisId, false)).spy
+        .mock.lastCall?.[0];
+      const tooltipTicks = renderTestCase(selectTooltipAxisTicks).spy.mock.lastCall?.[0];
+      assertNotNull(axisTicks);
+      assertNotNull(tooltipTicks);
+
+      const expected = exampleRadarData.map((entry, index) => [
+        entry.name,
+        [-270, -225, -180, -135, -90, -45, 0, 45][index],
+      ]);
+      expect(axisTicks.map(tick => [tick.value, tick.coordinate])).toEqual(expected);
+      expect(tooltipTicks.map(tick => [tick.value, tick.coordinate])).toEqual(expected);
     });
   });
 
@@ -516,6 +551,55 @@ describe('<Radar />', () => {
       fireEvent.touchEnd(polygon);
       expect(handleTouchEnd).toHaveBeenCalledTimes(1);
       expectLastCalledWith(handleTouchEnd, expect.objectContaining({ type: 'touchend' }));
+    });
+  });
+
+  describe('null values', () => {
+    const data = [
+      { subject: 'Math', score: 80, range: [20, 80] },
+      { subject: 'Physics', score: 60, range: [30, 60] },
+      { subject: 'History', score: null, range: [null, 50] },
+      { subject: 'Art', score: 70, range: [40, 70] },
+    ];
+
+    function renderRadar(props: Partial<RadarProps>) {
+      return render(
+        <RadarChart width={400} height={400} data={data}>
+          <PolarAngleAxis dataKey="subject" />
+          <PolarRadiusAxis domain={[0, 100]} />
+          <Radar dataKey="score" dot isAnimationActive={false} {...props} />
+        </RadarChart>,
+      );
+    }
+
+    it('should leave a gap at a null value instead of drawing it at the center', () => {
+      const { container } = renderRadar({ connectNulls: false });
+
+      expectRadarPolygons(container, [{ d: 'M200,75.2L293.6,200M90.8,200L200,75.2', fill: 'none', fillOpacity: null }]);
+      expect(getRadarDots(container)).toHaveLength(3);
+    });
+
+    it('should join the points around a null value when connectNulls is set', () => {
+      const { container } = renderRadar({ connectNulls: true });
+
+      expectRadarPolygons(container, [{ d: 'M200,75.2L293.6,200L90.8,200L200,75.2Z', fill: null, fillOpacity: null }]);
+      expect(getRadarDots(container)).toHaveLength(3);
+    });
+
+    it('should leave a gap in the base line at a null low value of a range', () => {
+      const { container } = renderRadar({ dataKey: 'range' });
+
+      const path = container.querySelector('.recharts-radar-polygon .recharts-polygon path');
+      assertNotNull(path);
+      expect(path.getAttribute('d')).toBe(
+        'M200,75.2L293.6,200L200,278L90.8,200L200,75.2L137.6,200M246.8,200L200,168.8L137.6,200',
+      );
+    });
+
+    it('should not write NaN into the DOM for a null value with labels', () => {
+      const { container } = renderRadar({ label: true });
+
+      expect(container.innerHTML).not.toContain('NaN');
     });
   });
 

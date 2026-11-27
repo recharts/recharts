@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ReactElement, useEffect } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -19,8 +20,10 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -29,6 +32,14 @@ interface ReferenceDotProps<
   YValueType extends ReferenceCoordinateValue = any,
 >
   extends Overflowable, ZIndexable {
+  /**
+   * The fill of the dot. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * If the fill object has no `color`, the definition gets the theme color.
+   *
+   * @example <ReferenceDot x={1} y={2} fill={{ definition: linearGradient(gradients.fadeDown) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * The radius of the dot in pixels.
    *
@@ -79,12 +90,14 @@ interface ReferenceDotProps<
    *
    * - `false`: no labels are rendered
    * - `string` | `number`: the content of the label
-   * - `object`: the props of LabelList component
+   * - `object`: the props of a single Label component, such as `value` and `position`
    * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
    *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label
    *
    * @defaultValue false
+   *
+   * @example <ReferenceDot x={10} y={20} label={{ value: 'Target', position: 'top' }} />
    */
   label?: ImplicitLabelType;
 
@@ -134,10 +147,19 @@ interface ReferenceDotProps<
   onMouseLeave?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
-> = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps<XValueType, YValueType>;
+> = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML' | 'fill'> &
+  ReferenceDotProps<XValueType, YValueType>;
+
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 const useCoordinate = (
   x: number | string | undefined,
@@ -158,7 +180,14 @@ const useCoordinate = (
 
   const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const result = scales.map({ x, y }, { position: 'middle' });
+  const cx = xAxisScale.map(x, { position: 'middle' });
+  const cy = yAxisScale.map(y, { position: 'middle' });
+  // don't render the dot if the scale can't compute a result that makes sense
+  if (!isWellBehavedNumber(cx) || !isWellBehavedNumber(cy)) {
+    return null;
+  }
+
+  const result: Coordinate = { x: cx, y: cy };
 
   if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;
@@ -193,7 +222,9 @@ const renderDot = (option: Props['shape'], props: DotProps) => {
   return dot;
 };
 
-function ReferenceDotImpl(props: PropsWithDefaults) {
+function ReferenceDotImpl(
+  props: PropsWithDefaults & { paintFill: string | undefined; fillDefinition: React.ReactNode },
+) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
@@ -212,6 +243,7 @@ function ReferenceDotImpl(props: PropsWithDefaults) {
   const dotProps: DotProps = {
     clipPath,
     ...svgPropertiesAndEvents(props),
+    fill: props.paintFill,
     cx: cx ?? undefined,
     cy: cy ?? undefined,
   };
@@ -219,6 +251,7 @@ function ReferenceDotImpl(props: PropsWithDefaults) {
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={clsx('recharts-reference-dot', className)}>
+        {props.fillDefinition != null && <defs>{props.fillDefinition}</defs>}
         {renderDot(shape, dotProps)}
         <CartesianLabelContextProvider
           x={cx - r}
@@ -245,14 +278,14 @@ export const referenceDotDefaultProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceDotThemeProps: Styles2D = {
+const defaultLegacyReferenceDotThemeProps: ColorStyles2D = {
   fill: '#fff',
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
 };
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
+type PropsWithDefaults = RequiresDefaultProps<StringFillProps, typeof referenceDotDefaultProps>;
 
 /**
  * Draws a circle on the chart to highlight a specific point.
@@ -267,22 +300,34 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceDot<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
->(outsideProps: Props<XValueType, YValueType>) {
+>(propsWithFillObject: Props<XValueType, YValueType>) {
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: splitFill(propsWithFillObject.fill).color };
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceDotThemeProps,
   );
   const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, ...themeProps }, referenceDotDefaultProps);
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
+  // Without a fill of its own, the dot paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.reference);
+  // the definition paints one circle
+  const { paint, definition } = useFillPaint(
+    propsWithFillObject.fill ?? themeFillObject,
+    props.fill,
+    'recharts-reference-dot-fill',
+    { width: 2 * r, height: 2 * r },
+  );
   return (
     <>
       <ReportReferenceDot y={y} x={x} r={r} yAxisId={yAxisId} xAxisId={xAxisId} ifOverflow={ifOverflow} />
-      <ReferenceDotImpl {...props} />
+      <ReferenceDotImpl {...props} paintFill={paint} fillDefinition={definition} />
     </>
   );
 }

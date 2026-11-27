@@ -17,3 +17,9 @@ testWithThemes('Themed Area with custom dot', async ({ mountStory }) => {
 
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Area fill and stroke variants', async ({ mountStory }) => {
+  const component = await mountStory('theme/AreaTheme/AreaFillStrokeVariants');
+
+  await expect(component).toHaveScreenshot();
+});

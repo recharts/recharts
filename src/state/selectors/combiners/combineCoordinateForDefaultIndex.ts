@@ -28,7 +28,7 @@ export const combineCoordinateForDefaultIndex = (
    * Until then, we choose the first one.
    */
   const firstConfiguration = tooltipConfigurations[0];
-  const maybePosition: Coordinate | undefined = firstConfiguration?.getPosition(defaultIndex);
+  const maybePosition = firstConfiguration?.getPosition(defaultIndex);
   if (maybePosition != null) {
     return maybePosition;
   }
@@ -41,6 +41,29 @@ export const combineCoordinateForDefaultIndex = (
       return {
         x: tick.coordinate,
         y: (offset.top + height) / 2,
+      };
+    }
+    case 'radial': {
+      if (polarViewBox) {
+        const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = polarViewBox;
+        const radius = tick.coordinate;
+        const angle = (startAngle + endAngle) / 2;
+        return {
+          ...polarToCartesian(cx, cy, outerRadius, angle),
+          cx,
+          cy,
+          radius,
+          angle,
+          startAngle,
+          endAngle,
+          innerRadius,
+          outerRadius,
+          clockWise: false,
+        };
+      }
+      return {
+        x: (offset.left + width) / 2,
+        y: tick.coordinate,
       };
     }
     case 'centric': {
@@ -57,7 +80,6 @@ export const combineCoordinateForDefaultIndex = (
       };
     }
     default: {
-      // TODO radial layouts need polar coordinates instead of the vertical fallback.
       return {
         x: (offset.left + width) / 2,
         y: tick.coordinate,

@@ -37,9 +37,13 @@ describe('AllZIndexPortals', () => {
       Object.values(DefaultZIndexes).reduce((acc, val) => Math.max(acc, val), Number.NEGATIVE_INFINITY) + 1;
 
     // all z-index portals should be rendered (they are <g> elements with a recharts-zIndex-layer_ class)
-    expect(container.querySelectorAll('g[class*="recharts-zIndex-layer_"]')).toHaveLength(allZIndexes.length);
-    // and none of them should be made focusable in any way
-    expect(container.querySelectorAll('g[tabindex]')).toHaveLength(0);
+    const initialPortals = container.querySelectorAll('g[class*="recharts-zIndex-layer_"]');
+    expect(initialPortals).toHaveLength(allZIndexes.length);
+    // each portal should have tabIndex=-1 (out of Tab order) and outline: none (no pointer focus ring)
+    initialPortals.forEach(portal => {
+      expect(portal).toHaveAttribute('tabindex', '-1');
+      expect(portal).toHaveStyle({ outlineStyle: 'none' });
+    });
 
     act(() => {
       store.dispatch(registerZIndexPortal({ zIndex: newZIndexDefinitelyNotOneOfTheDefaults }));

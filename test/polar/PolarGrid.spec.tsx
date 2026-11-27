@@ -326,6 +326,49 @@ describe('<PolarGrid />', () => {
       expect(container.querySelectorAll('.recharts-polar-grid-concentric-circle')).toHaveLength(4);
     });
 
+    test('Resolves percentage radii relative to the outer radius', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <PolarGrid
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            gridType="circle"
+            polarAngles={polarAngles}
+            polarRadius={['25%', '50%', 120, '100%']}
+          />
+        </Surface>,
+      );
+
+      expectPolarGridCircles(container, [
+        { cx: 250, cy: 250, r: 50 },
+        { cx: 250, cy: 250, r: 100 },
+        { cx: 250, cy: 250, r: 120 },
+        { cx: 250, cy: 250, r: 200 },
+      ]);
+    });
+
+    test('Draws the background with the largest resolved percentage radius', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <PolarGrid
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            gridType="circle"
+            fill="red"
+            polarAngles={polarAngles}
+            polarRadius={[150, '100%']}
+          />
+        </Surface>,
+      );
+
+      const background = container.querySelector('.recharts-polar-grid-concentric-circle[fill="red"]');
+      expect(background?.getAttribute('r')).toBe('200');
+    });
+
     test("Don't render any path when outerRadius is smaller than 0", () => {
       const { container } = render(
         <Surface width={500} height={500}>
@@ -349,6 +392,21 @@ describe('<PolarGrid />', () => {
   });
 
   describe('as a child of RadarChart', () => {
+    test('Resolves percentage radii relative to the outer radius of the chart', () => {
+      const { container } = render(
+        <RadarChart width={500} height={500} data={exampleRadarData} outerRadius={200}>
+          <Radar dataKey="value" />
+          <PolarGrid gridType="circle" polarRadius={['10%', '50%', '100%']} />
+        </RadarChart>,
+      );
+
+      expect(
+        Array.from(container.querySelectorAll('.recharts-polar-grid-concentric-circle')).map(circle =>
+          Number(circle.getAttribute('r')),
+        ),
+      ).toEqual([20, 100, 200]);
+    });
+
     test('Renders polar radius axis with RadarChart', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
@@ -790,16 +848,16 @@ describe('<PolarGrid />', () => {
     it('should select angle ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
       expectLastCalledWith(spy, [
-        { index: 0, coordinate: 0, value: 0, offset: -0 },
-        { index: 1, coordinate: 40, value: 1, offset: -0 },
-        { index: 2, coordinate: 80, value: 2, offset: -0 },
-        { index: 3, coordinate: 120, value: 3, offset: -0 },
-        { index: 4, coordinate: 160, value: 4, offset: -0 },
-        { index: 5, coordinate: 200, value: 5, offset: -0 },
-        { index: 6, coordinate: 240, value: 6, offset: -0 },
-        { index: 7, coordinate: 280, value: 7, offset: -0 },
-        { index: 8, coordinate: 320, value: 8, offset: -0 },
-        { index: 9, coordinate: 360, value: 9, offset: -0 },
+        { index: 0, coordinate: 0, value: 0, offset: 0 },
+        { index: 1, coordinate: 40, value: 1, offset: 0 },
+        { index: 2, coordinate: 80, value: 2, offset: 0 },
+        { index: 3, coordinate: 120, value: 3, offset: 0 },
+        { index: 4, coordinate: 160, value: 4, offset: 0 },
+        { index: 5, coordinate: 200, value: 5, offset: 0 },
+        { index: 6, coordinate: 240, value: 6, offset: 0 },
+        { index: 7, coordinate: 280, value: 7, offset: 0 },
+        { index: 8, coordinate: 320, value: 8, offset: 0 },
+        { index: 9, coordinate: 360, value: 9, offset: 0 },
       ]);
     });
 
@@ -943,19 +1001,19 @@ describe('<PolarGrid />', () => {
         const expected: ReadonlyArray<TickItem> = [
           {
             coordinate: 0,
-            offset: -0,
+            offset: 0,
             value: 0,
             index: 0,
           },
           {
             coordinate: 180,
-            offset: -0,
+            offset: 0,
             value: 600,
             index: 1,
           },
           {
             coordinate: 360,
-            offset: -0,
+            offset: 0,
             value: 1200,
             index: 2,
           },
@@ -1015,14 +1073,14 @@ describe('<PolarGrid />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv', false));
         expectLastCalledWith(spy, [
-          { index: 0, coordinate: 0, offset: -0, value: 0 },
-          { index: 1, coordinate: 47.368421052631575, offset: -0, value: 200 },
-          { index: 2, coordinate: 94.73684210526315, offset: -0, value: 400 },
-          { index: 3, coordinate: 142.10526315789474, offset: -0, value: 600 },
-          { index: 4, coordinate: 189.4736842105263, offset: -0, value: 800 },
-          { index: 5, coordinate: 236.84210526315792, offset: -0, value: 1000 },
-          { index: 6, coordinate: 284.2105263157895, offset: -0, value: 1200 },
-          { index: 7, coordinate: 331.57894736842104, offset: -0, value: 1400 },
+          { index: 0, coordinate: 0, offset: 0, value: 0 },
+          { index: 1, coordinate: 47.368421052631575, offset: 0, value: 200 },
+          { index: 2, coordinate: 94.73684210526315, offset: 0, value: 400 },
+          { index: 3, coordinate: 142.10526315789474, offset: 0, value: 600 },
+          { index: 4, coordinate: 189.4736842105263, offset: 0, value: 800 },
+          { index: 5, coordinate: 236.84210526315792, offset: 0, value: 1000 },
+          { index: 6, coordinate: 284.2105263157895, offset: 0, value: 1200 },
+          { index: 7, coordinate: 331.57894736842104, offset: 0, value: 1400 },
         ]);
       });
 

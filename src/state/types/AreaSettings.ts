@@ -9,6 +9,6 @@ export type AreaSettings = BaseCartesianGraphicalItemSettings &
     type: 'area';
     connectNulls: boolean;
     baseValue: BaseValue | undefined;
-    dataKey: DataKey<any>;
+    dataKey: DataKey<any> | undefined;
     data: ChartData | undefined;
   };

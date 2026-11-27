@@ -10,6 +10,9 @@ import { Layer, Props as LayerProps } from '../container/Layer';
 import { Rectangle, RectRadius } from '../shape/Rectangle';
 import { propsAreEqual } from '../util/propsAreEqual';
 
+/**
+ * @public
+ */
 export type BarStackProps = {
   /**
    * When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.
@@ -170,5 +173,6 @@ const BarStackImpl = (props: BarStackProps) => {
 /**
  * @provides BarStackContext
  * @since 3.6
+ * @public
  */
 export const BarStack: ComponentType<BarStackProps> = React.memo(BarStackImpl, propsAreEqual);

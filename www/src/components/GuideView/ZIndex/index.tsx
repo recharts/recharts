@@ -48,6 +48,17 @@ export function ZIndex() {
         sourceCode={PrahaMetroSource}
         stackBlitzTitle="Recharts Praha Metro Example"
       />
+      <h2>Overlapping bar groups</h2>
+      <p>
+        Unstacked bars on the same category axis occupy separate slots within each category. The <code>zIndex</code>{' '}
+        prop controls SVG paint order and leaves the bar positions unchanged.
+      </p>
+      <p>
+        To overlay bar groups, bind them to separate category axes with matching categories, scales, and padding. In the
+        default layout, add a second <code>XAxis</code> with a distinct <code>xAxisId</code> and set <code>hide</code>{' '}
+        to display a single set of ticks. Assign the background bars to that axis and give them a lower{' '}
+        <code>zIndex</code> to paint them behind the foreground bars.
+      </p>
       <h2>Limitations</h2>
       <p>
         SVG does not support z-index directly. Recharts has a custom implementation that at first looks and feels like

@@ -1,4 +1,15 @@
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, TooltipIndex } from 'recharts';
+import {
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  ZAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  TooltipIndex,
+  autoPalette,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -37,8 +48,8 @@ const JointLineScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }
       <ZAxis type="number" range={[100, 100]} />
       <Tooltip defaultIndex={defaultIndex} />
       <Legend />
-      <Scatter name="A school" data={data01} dataKey="x" line shape="cross" />
-      <Scatter name="B school" data={data02} dataKey="y" line lineJointType="monotone" shape="diamond" />
+      <Scatter name="A school" data={data01} fill={autoPalette[0]} line shape="cross" />
+      <Scatter name="B school" data={data02} fill={autoPalette[1]} line lineJointType="monotone" shape="diamond" />
       <RechartsDevtools />
     </ScatterChart>
   );

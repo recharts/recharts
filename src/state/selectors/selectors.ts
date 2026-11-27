@@ -131,7 +131,7 @@ export const selectCoordinateForDefaultIndex: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => Coordinate | undefined = createSelector(
+) => Coordinate | PolarCoordinate | undefined = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -150,12 +150,12 @@ export const selectActiveCoordinate: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => Coordinate | undefined = createSelector(
+) => Coordinate | PolarCoordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (
     tooltipInteractionState: TooltipInteractionState,
-    defaultIndexCoordinate: Coordinate | undefined,
-  ): Coordinate | undefined => {
+    defaultIndexCoordinate: Coordinate | PolarCoordinate | undefined,
+  ): Coordinate | PolarCoordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );

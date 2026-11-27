@@ -8,4 +8,5 @@ export const expectedInBundle = [
   'Text',
   'ZIndexLayer',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;

@@ -12,9 +12,11 @@ export const expectedInBundle = [
   'LineDrawShape',
   'matchAppend',
   'matchByIndex',
+  'Symbols',
   'Text',
   'useActiveTooltipDataPoints',
   'usePlotArea',
   'ZIndexLayer',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;

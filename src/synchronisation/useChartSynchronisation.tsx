@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
@@ -85,6 +85,21 @@ function useTooltipSyncEventsListener() {
             x: viewBox.x + (sourceWidth ? (x - sourceX) / sourceWidth : 0) * viewBox.width,
             y: viewBox.y + (sourceHeight ? (y - sourceY) / sourceHeight : 0) * viewBox.height,
           };
+
+          /*
+           * Scaling alone assumes that both charts place the same index at the same relative position.
+           * That is not true when the axes have different scales - for example LineChart puts points
+           * on the edges of the plot area, while BarChart puts them in the middle of each band.
+           * So along the tooltip axis, snap to where this chart renders the synchronised index.
+           */
+          const activeTick = tooltipTicks?.find(tick => String(tick.index) === String(action.payload.index));
+          if (activeTick != null) {
+            if (layout === 'horizontal') {
+              scaledCoordinate.x = activeTick.coordinate;
+            } else if (layout === 'vertical') {
+              scaledCoordinate.y = activeTick.coordinate;
+            }
+          }
 
           dispatch({
             ...action,
@@ -289,6 +304,36 @@ export function useTooltipChartSynchronisation(
    */
   const isReceivingSynchronisation = tooltipState?.sourceViewBox != null;
   const viewBox = useViewBox();
+  const lastSentActiveRef = useRef(false);
+
+  useEffect(() => {
+    if (syncId == null || eventEmitterSymbol == null) {
+      return noop;
+    }
+    return () => {
+      /*
+       * The other charts keep the tooltip this chart sent them until they get an inactive event.
+       * Unmounting under the pointer fires no mouseleave, so send that event here.
+       */
+      if (lastSentActiveRef.current) {
+        lastSentActiveRef.current = false;
+        eventCenter.emit(
+          TOOLTIP_SYNC_EVENT,
+          syncId,
+          setSyncInteraction({
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+            label: undefined,
+            sourceViewBox: undefined,
+            graphicalItemId: undefined,
+          }),
+          eventEmitterSymbol,
+        );
+      }
+    };
+  }, [syncId, eventEmitterSymbol]);
 
   useEffect(() => {
     if (isReceivingSynchronisation) {
@@ -297,6 +342,7 @@ export function useTooltipChartSynchronisation(
        * Let's not send any outgoing synchronisation events while that's happening
        * to avoid infinite loops and cascading tooltip clears.
        */
+      lastSentActiveRef.current = false;
       return;
     }
     if (syncId == null) {
@@ -322,6 +368,7 @@ export function useTooltipChartSynchronisation(
       sourceViewBox: viewBox,
       graphicalItemId: activeGraphicalItemId,
     });
+    lastSentActiveRef.current = isTooltipActive;
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [
     isReceivingSynchronisation,

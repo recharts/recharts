@@ -94,6 +94,16 @@ We use TypeScript for type safety. Some rules to follow:
 - Prefer `unknown` over `any`. Refine the type.
 - Type your function parameters and return values explicitly, do not rely on implicit any or inference. Exceptions are React components and trivial functions where the types are obvious.
 - Do not use `as` type assertions, ever. The only exception is `as const`.
+- Do not use `!` non-null assertions. Check for `null` and `undefined` instead.
+
+ESLint enforces `any`, `as`, and `!` in all TypeScript files. Older code still has many of these; they are listed
+in `eslint-suppressions.json` so that lint passes. This file is a ratchet:
+
+- New violations fail lint. Do not add them to the suppressions file; CI checks that the number of suppressions never grows.
+- When you fix a suppressed violation, lint fails until you update the file: `npm run lint -- --prune-suppressions`.
+
+The same ratchet applies to `cloneElement` (rule `recharts/no-clone-element`). Do not clone elements;
+render a new element with explicit props instead.
 
 ## <a name="license"></a>License
 

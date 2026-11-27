@@ -134,11 +134,8 @@ export const DataKeyOnYAxisMultipleDataArrays = () => {
       <XAxis dataKey="name" allowDuplicatedCategory={false} />
       <YAxis dataKey="value" />
       <Legend />
-      {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
       <Area data={data1} stackId="1" />
-      {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
       <Area data={data2} stackId="1" />
-      {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
       <Area data={data3} stackId="1" />
       <Tooltip defaultIndex={1} />
     </AreaChart>

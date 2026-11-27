@@ -1,5 +1,6 @@
 import React from 'react';
-import { Area, AreaChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, LabelList, Legend, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { name: 'A', uv: 400, pv: 2400, amt: 2400 },
@@ -70,5 +71,28 @@ export function ThemedAreaWithCustomDot() {
     <RechartsThemeProvider value={areaTheme}>
       <AreaWithCustomDotChart />
     </RechartsThemeProvider>
+  );
+}
+
+export function AreaFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <AreaChart
+          style={{ width: '380px', height: '260px' }}
+          data={withDataColors(data, fromData)}
+          margin={{ top: 20, right: 30 }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Tooltip defaultIndex={0} />
+          <Area type="monotone" dataKey="uv" dot isAnimationActive={false} {...itemColorProps(fromProps)}>
+            <LabelList position="center" />
+            <LabelList position="top" />
+          </Area>
+        </AreaChart>
+      )}
+    />
   );
 }

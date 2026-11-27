@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement, ReactElement } from 'react';
 
 import { Layer } from '../container/Layer';
-import { ActiveShape, ShapeAnimationProps } from './types';
+import { ActiveShape, ShapeAnimationProps, WithFillObject } from './types';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -49,7 +49,16 @@ export type ShapeProps<PropsType extends object, ElementType extends SVGElement 
   inActiveClassName?: string;
 };
 
-function mergeShapeProps<PropsType extends object>(option: ShapeOptionProps<PropsType>, props: PropsType): PropsType {
+/**
+ * Merges the props of a shape option into the props of the default shape. The option wins.
+ * An object option may set `fill` to a fill object: the default shapes paint those with their own definition.
+ * @param option props from the shape option
+ * @param props props of the default shape
+ */
+function mergeShapeProps<PropsType extends object>(
+  option: ShapeOptionProps<PropsType> | WithFillObject<Partial<PropsType>>,
+  props: PropsType,
+): PropsType {
   return {
     ...props,
     ...option,

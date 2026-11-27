@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList } from '../../src';
+import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList, Tooltip } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { computeFunnelTrapezoids } from '../../src/cartesian/Funnel';
@@ -104,6 +104,33 @@ describe('<Funnel />', () => {
     expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
+  it('should render active shape for the Tooltip defaultIndex', () => {
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={data} isAnimationActive={false} activeShape={{ fill: 'red' }} />
+        <Tooltip defaultIndex={1} />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    expect(trapezoids).toHaveLength(data.length);
+    const activeShapes = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShapes).toHaveLength(1);
+    expect(trapezoids[1].contains(activeShapes[0])).toBe(true);
+    expect(activeShapes[0].querySelector('.recharts-trapezoid')).toHaveAttribute('fill', 'red');
+  });
+
+  it('should not render active shape for the Tooltip defaultIndex when activeShape is not set', () => {
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={data} isAnimationActive={false} />
+        <Tooltip defaultIndex={1} />
+      </FunnelChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(0);
+  });
+
   it('Renders funnel custom cell in simple FunnelChart', () => {
     const { container } = render(
       <FunnelChart width={500} height={300}>
@@ -187,6 +214,51 @@ describe('<Funnel />', () => {
       expect(Number.isFinite(trapezoid.upperWidth)).toBe(true);
       expect(Number.isFinite(trapezoid.lowerWidth)).toBe(true);
       expect(Number.isFinite(trapezoid.height)).toBe(true);
+    });
+  });
+
+  it('should give the stage above a null value a lowerWidth of 0', () => {
+    const offset = { left: 10, top: 20, width: 400, height: 300, right: 10, bottom: 10, brushBottom: 0 };
+
+    const trapezoids = computeFunnelTrapezoids({
+      dataKey: 'value',
+      nameKey: 'name',
+      displayedData: [
+        { value: 100, name: 'A' },
+        { value: null, name: 'B' },
+        { value: 50, name: 'C' },
+      ],
+      tooltipType: undefined,
+      lastShapeType: 'triangle',
+      reversed: false,
+      offset,
+      customWidth: undefined,
+      graphicalItemId: 'test-funnel',
+    });
+
+    expect(trapezoids.map(({ upperWidth, lowerWidth }) => ({ upperWidth, lowerWidth }))).toEqual([
+      { upperWidth: 400, lowerWidth: 0 },
+      { upperWidth: 0, lowerWidth: 200 },
+      { upperWidth: 200, lowerWidth: 0 },
+    ]);
+  });
+
+  it('should draw the stage above a null value', () => {
+    const nullData = [
+      { value: 100, name: 'A' },
+      { value: null, name: 'B' },
+      { value: 50, name: 'C' },
+    ];
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={nullData} isAnimationActive={false} />
+      </FunnelChart>,
+    );
+
+    const paths = container.querySelectorAll('.recharts-funnel-trapezoid path');
+    expect(paths).toHaveLength(3);
+    paths.forEach(path => {
+      expect(path.getAttribute('d')).not.toContain('NaN');
     });
   });
 });

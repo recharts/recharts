@@ -11,18 +11,15 @@ import {
   useChartHeight,
   Legend,
   Text,
-  TextProps,
   ZIndexLayer,
   DefaultZIndexes,
 } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
-import { useState, MouseEvent, TouchEvent, useCallback } from 'react';
+import { useState, MouseEvent, TouchEvent, useCallback, CSSProperties } from 'react';
 
 const data = generateMockData(30, 123);
 
-const TextWithOutline = (textProps: TextProps) => (
-  <Text stroke="white" strokeWidth={3} fill="black" paintOrder="stroke" {...textProps} />
-);
+const pointerEventsNone: CSSProperties = { pointerEvents: 'none' };
 
 const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
   const width = useChartWidth();
@@ -32,24 +29,21 @@ const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
   }
   return (
     <ZIndexLayer zIndex={DefaultZIndexes.cursorLine}>
-      <TextWithOutline
-        x={pointer.relativeX + 5}
-        y={0}
-        verticalAnchor="start"
-      >{`x: ${pointer.relativeX}`}</TextWithOutline>
-      <TextWithOutline
+      <Text halo x={pointer.relativeX + 5} y={0} verticalAnchor="start">{`x: ${pointer.relativeX}`}</Text>
+      <Text
+        halo
         y={pointer.relativeY + 5}
         x={width}
         verticalAnchor="start"
         textAnchor="end"
-      >{`y: ${pointer.relativeY}`}</TextWithOutline>
+      >{`y: ${pointer.relativeY}`}</Text>
       <Cross
         /*
          * pointerEvents: none is necessary because without it, browser will detect hovering over the Cross itself
          * which makes it trigger mouseLeave on the chart which makes it erase the Cross which looks like it's blinking.
          * If we skip pointer events on the cross then we can skip the mouseLeave and the movement is smooth.
          */
-        style={{ pointerEvents: 'none' }}
+        style={pointerEventsNone}
         x={pointer.relativeX}
         y={pointer.relativeY}
         top={0}
@@ -62,6 +56,14 @@ const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
       />
     </ZIndexLayer>
   );
+};
+
+const chartStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '500px',
+  maxHeight: '200px',
+  aspectRatio: 1,
+  touchAction: 'none',
 };
 
 export default function CrosshairExample({
@@ -110,13 +112,7 @@ export default function CrosshairExample({
 
   return (
     <AreaChart
-      style={{
-        width: '100%',
-        maxWidth: '500px',
-        maxHeight: '200px',
-        aspectRatio: 1,
-        touchAction: 'none',
-      }}
+      style={chartStyle}
       responsive
       data={data}
       onMouseMove={handleMouseMove}

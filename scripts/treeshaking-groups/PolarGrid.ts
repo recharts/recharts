@@ -4,4 +4,5 @@ export const expectedInBundle = [
   'PolarGrid',
   'ZIndexLayer',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;

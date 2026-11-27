@@ -5,12 +5,14 @@ import PieChartWithPaddingAngle from './PieChartWithPaddingAngle';
 import StraightAnglePieChart from './StraightAnglePieChart';
 import TwoLevelPieChart from './TwoLevelPieChart';
 import PieChartWithNeedle from './PieChartWithNeedle';
+import NightingaleChart from './NightingaleChart';
 import customActiveShapePieChartSource from './CustomActiveShapePieChart?raw';
 import pieChartWithCustomizedLabelSource from './PieChartWithCustomizedLabel?raw';
 import pieChartWithPaddingAngleSource from './PieChartWithPaddingAngle?raw';
 import straightAnglePieChartSource from './StraightAnglePieChart?raw';
 import twoLevelPieChartSource from './TwoLevelPieChart?raw';
 import pieChartWithNeedleSource from './PieChartWithNeedle?raw';
+import nightingaleChartSource from './NightingaleChart?raw';
 import { ChartExample } from '../types.ts';
 import PieChartInFlexbox from './PieChartInFlexbox.tsx';
 import pieChartInFlexboxSource from './PieChartInFlexbox?raw';
@@ -53,6 +55,18 @@ export const pieChartExamples = {
     Component: PieChartWithNeedle,
     sourceCode: pieChartWithNeedleSource,
     name: 'Pie Chart With Needle',
+  },
+  NightingaleChart: {
+    Component: NightingaleChart,
+    sourceCode: nightingaleChartSource,
+    name: 'Nightingale Chart',
+    description: (
+      <p>
+        A Nightingale chart keeps the angle of every slice equal and uses the radius to show the value. This example
+        gives each entry the same <code>weight</code> and passes a function to <code>outerRadius</code> so the radius
+        grows with the value.
+      </p>
+    ),
   },
   PieChartInFlexbox: {
     Component: () => (

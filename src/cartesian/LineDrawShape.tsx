@@ -118,6 +118,9 @@ function computeAnimatedStrokeDasharray(
   return generateSimpleStrokeDasharray(totalLength, visibleLength);
 }
 
+/**
+ * @public
+ */
 export type LineDrawShapeProps = Omit<CurveProps, 'pathRef'> &
   ShapeAnimationProps & {
     /**
@@ -160,6 +163,7 @@ export type LineDrawShapeProps = Omit<CurveProps, 'pathRef'> &
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export function LineDrawShape(props: LineDrawShapeProps): React.ReactElement | null {
   const {

@@ -235,7 +235,7 @@ const FunnelChartTestCase: TooltipVisibilityTestCase = {
     </FunnelChart>
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(360px, 55.833333333333336px);',
+  expectedTransform: 'transform: translate(360px, 55.8333px);',
   tooltipIndex: '0',
 };
 
@@ -248,7 +248,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
     </PieChart>
   ),
   mouseHoverSelector: pieChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(271.8676024097812px, 161.6138988484545px);',
+  expectedTransform: 'transform: translate(271.868px, 161.614px);',
   tooltipIndex: '0',
 };
 
@@ -264,7 +264,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
     </RadarChart>
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(188.75025773223268px, 239.9964286625318px);',
+  expectedTransform: 'transform: translate(188.75px, 239.996px);',
   tooltipIndex: '0',
 };
 
@@ -280,7 +280,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(212.65496645665198px, 212.65496645665195px);',
+  expectedTransform: 'transform: translate(212.655px, 212.655px);',
   tooltipIndex: '0',
 };
 
@@ -298,7 +298,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
     </Sankey>
   ),
   mouseHoverSelector: sankeyNodeMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(35px, 114.89236115144739px);',
+  expectedTransform: 'transform: translate(35px, 114.892px);',
   tooltipIndex: '0',
 };
 
@@ -1163,6 +1163,7 @@ describe('Tooltip visibility', () => {
               dataKey: 'uv',
               fill: '#8884d8',
               graphicalItemId: 'my-item-id',
+              ignoreDataEntryColors: true,
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1255,6 +1256,7 @@ describe('Tooltip visibility', () => {
               dataKey: 'uv',
               fill: '#8884d8',
               graphicalItemId: 'my-item-id',
+              ignoreDataEntryColors: true,
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1599,7 +1601,7 @@ describe('Tooltip visibility', () => {
           '3 : 2400',
           '5 : 2400',
           'stature : 2400cm',
-          'weight : 2400kg',
+          'weight : 400kg',
         ]);
       });
     });

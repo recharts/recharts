@@ -220,32 +220,47 @@ export function Performance() {
         <SourceCodeEditor value={dataKeyAsFunctionGoodExample} />
       </section>
       <section>
-        <h2>eslint-plugin-react-perf</h2>
+        <h2>Linting</h2>
         <p>
-          To help keeping stable references, consider using the{' '}
-          <TargetBlankLink href="https://www.npmjs.com/package/eslint-plugin-react-perf">
-            eslint-plugin-react-perf
-          </TargetBlankLink>{' '}
-          ESLint plugin, which will help identify places where you might be creating new references unnecessarily.
+          To help keeping stable references, consider using a linter. I recommend on of these, depending on your
+          environment:
         </p>
-        <h3>Recommended configuration</h3>
+        <ul>
+          <li>
+            <TargetBlankLink href="https://www.npmjs.com/package/eslint-plugin-react-perf">
+              eslint-plugin-react-perf
+            </TargetBlankLink>{' '}
+            for eslint 8
+          </li>
+          <li>
+            <TargetBlankLink href="https://www.npmjs.com/package/eslint-plugin-react-perf-x">
+              eslint-plugin-react-perf-x
+            </TargetBlankLink>{' '}
+            for eslint 9 and 10 (flat config)
+          </li>
+          <li>
+            <TargetBlankLink href="https://oxc.rs/docs/guide/usage/linter/rules.html?sort=name&dir=asc&scope=react_perf&category=perf">
+              oxlint react-perf built in rules
+            </TargetBlankLink>{' '}
+            if you use oxlint.
+          </li>
+        </ul>
+        <h3>Recommended configuration for flat eslint config:</h3>
         <SourceCodeEditor
-          value={`
-{
-  "plugins": ["react-perf"],
-  "rules": {
-    /*
-     * New object as prop creates a new reference on each render.
-     * Recharts is optimized for this since 3.5.0.
-     * You may enable this rule if you are using an older version,
-     * or if you want to be extra cautious.
-     */
-    // 'react-perf/jsx-no-new-object-as-prop': 'error',
-    'react-perf/jsx-no-new-array-as-prop': 'error',
-    'react-perf/jsx-no-new-function-as-prop': 'error',
-    'react-perf/jsx-no-jsx-as-prop': 'error',
-  }
-}
+          value={`import reactPerf from 'eslint-plugin-react-perf-x';
+const perfOptimization = {
+  name: 'x/react-perf',
+  files: ['src/**/*.tsx'],
+  plugins: { 'react-perf': reactPerf },
+  rules: {
+    'react-perf/jsx-no-new-object-as-prop': ['error'],
+    'react-perf/jsx-no-new-array-as-prop': ['error'],
+    'react-perf/jsx-no-new-function-as-prop': ['error'],
+    'react-perf/jsx-no-jsx-as-prop': ['error'],
+  },
+};
+// ... merge with your other plugins here
+export default [perfOptimization];
 `}
         />
       </section>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { scaleLinear } from 'victory-vendor/d3-scale';
+import { scaleBand, scaleLinear } from 'victory-vendor/d3-scale';
 import { getEndPoints, ReferenceLineSegment } from '../../../src/cartesian/ReferenceLine';
 import { CartesianViewBoxRequired } from '../../../src/util/types';
 import { BandPosition, rechartsScaleFactory, RechartsScale } from '../../../src/util/scale/RechartsScale';
@@ -365,6 +365,37 @@ describe('getEndPoints', () => {
         ]);
       },
     );
+
+    it.each(['hidden', 'visible', 'extendDomain', 'discard'] as const)(
+      'should return null if a segment end is not in the band scale domain and ifOverflow = %s',
+      ifOverflow => {
+        const segment: ReferenceLineSegment = [
+          { x: 'A', y: 5 },
+          { x: 'C', y: 10 },
+        ];
+        const scaleX = rechartsScaleFactory<string>(scaleBand().domain(['B', 'C', 'D', 'E']).range([0, 100]));
+        const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+        const result = getEndPoints(scaleX, scaleY, viewBox, 'middle', undefined, undefined, {
+          segment,
+          ifOverflow,
+        });
+        expect(result).toEqual(null);
+      },
+    );
+
+    it('should fall back to the range edge if a segment end has no x', () => {
+      const segment: ReferenceLineSegment = [{ y: 5 }, { x: 'C', y: 10 }];
+      const scaleX = rechartsScaleFactory<string>(scaleBand().domain(['B', 'C', 'D', 'E']).range([0, 100]));
+      const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+      const result = getEndPoints(scaleX, scaleY, viewBox, 'middle', undefined, undefined, {
+        segment,
+        ifOverflow: 'discard',
+      });
+      expect(result).toEqual([
+        { x: 0, y: 25 },
+        { x: 37.5, y: 50 },
+      ]);
+    });
 
     it.each(['hidden', 'visible', 'extendDomain', 'discard'] as const)(
       'should return whatever scales returned if in range and ifOverflow = %s',

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { CartesianViewBox } from '../util/types';
 
@@ -15,6 +15,9 @@ interface SurfaceProps {
   desc?: string;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
 /**
@@ -23,6 +26,7 @@ export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
  * All charts already include a Surface component, so you would not normally use this directly.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg
+ * @public
  */
 export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
   const { children, width, height, viewBox, className, style, title, desc, ...others } = props;

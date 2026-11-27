@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { castDraft, WritableDraft } from 'immer';
 import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
@@ -77,4 +77,4 @@ export const referenceElementsSlice = createSlice({
 
 export const { addDot, removeDot, addArea, removeArea, addLine, removeLine } = referenceElementsSlice.actions;
 
-export const referenceElementsReducer = referenceElementsSlice.reducer;
+export const referenceElementsReducer: Reducer<ReferenceElementState> = referenceElementsSlice.reducer;

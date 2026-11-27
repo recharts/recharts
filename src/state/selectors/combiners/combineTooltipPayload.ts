@@ -1,3 +1,4 @@
+import { readEntryFill } from '../../../fill/fillDefinitions';
 import {
   TooltipEntrySettings,
   TooltipIndex,
@@ -64,7 +65,8 @@ function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefi
   const dataKey = 'dataKey' in item ? parseDataKey(item.dataKey) : undefined;
   const payload = 'payload' in item ? item.payload : undefined;
   const color = 'color' in item ? parseColor(item.color) : undefined;
-  const fill = 'fill' in item ? parseColor(item.fill) : undefined;
+  // a fill object in the data counts by its color
+  const fill = readEntryFill(item).color;
   const stroke = 'stroke' in item ? parseColor(item.stroke) : undefined;
 
   return {
@@ -103,13 +105,14 @@ export const combineTooltipPayload = (
   }
   const { chartData, computedData } = chartDataState;
   const [sliceStartIndex, sliceEndIndex] = getBrushSliceIndexes(chartDataState);
+  // Brush indexes address the chart data. Data defined on an item is used as the item drew it.
+  const slicedChartData = chartData == null ? undefined : getSliced(chartData, sliceStartIndex, sliceEndIndex);
 
   const init: Array<TooltipPayloadEntry> = [];
 
-  return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
-    const finalData = selectFinalData(dataDefinedOnItem, chartData);
-
-    const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
+  return tooltipPayloadConfigurations.reduce((agg, configuration): Array<TooltipPayloadEntry> => {
+    const { dataDefinedOnItem, settings, getEntryColor } = configuration;
+    const sliced = selectFinalData(dataDefinedOnItem, slicedChartData);
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxisDataKey;
     // BaseAxisProps does not support nameKey but it could!
@@ -142,19 +145,11 @@ export const combineTooltipPayload = (
        */
       tooltipEventType === 'axis'
     ) {
-      tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
-      /*
-       * When allowDuplicatedCategory is false and there are duplicate category values
-       * in the data, findEntryInArray returns only the first matching entry.
-       * If the user hovers over a bar that corresponds to a later duplicate,
-       * the activeIndex provides the correct position. We fall back to the index-based
-       * search when the label-based search returns undefined, which can happen
-       * when the activeLabel does not precisely match any data entry (e.g., due to
-       * type coercion differences between tick values and data values).
-       */
-      if (tooltipPayload == null) {
-        tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
-      }
+      // A category can repeat, so the row at the active index wins when it has the active label.
+      const entryAtIndex = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
+      tooltipPayload =
+        findEntryInArray([entryAtIndex], tooltipAxisDataKey, activeLabel) ??
+        findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data
@@ -192,13 +187,18 @@ export const combineTooltipPayload = (
       });
     } else {
       /*
-       * Bar rectangles apply SVG colors from the active datum after their series and theme props.
-       * Preserve that precedence in the tooltip metadata without changing other chart types.
+       * Graphical items that resolve the styles of each data entry on their own (Bar) report the color
+       * they render the active entry with. The others take the colors of the active datum before their series colors.
+       * Line, Area and Radar draw one shape per series, so they keep the series color.
        */
-      const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const parsedItem = settings.ignoreDataEntryColors ? undefined : parseTooltipPayloadItem(tooltipPayload);
+      const entryColor =
+        getEntryColor == null
+          ? (parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke)
+          : getEntryColor(tooltipPayload);
       const tooltipEntrySettings: TooltipEntrySettings = {
         ...settings,
-        color: parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke ?? settings.color,
+        color: entryColor ?? settings.color,
         fill: parsedItem?.fill ?? settings.fill,
         stroke: parsedItem?.stroke ?? settings.stroke,
       };

@@ -8,8 +8,9 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
-import reactPerf from 'eslint-plugin-react-perf';
+import reactPerf from 'eslint-plugin-react-perf-x';
 import jsdoc from 'eslint-plugin-jsdoc';
+import { rechartsPlugin } from './scripts/eslint-rules/no-clone-element.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -204,7 +205,6 @@ const typescriptConfig = [
     name: 'x/typescript-eslint',
     rules: {
       '@typescript-eslint/no-use-before-define': 'error',
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -314,7 +314,7 @@ const overridesConfig = [
   },
   {
     name: 'scripts override',
-    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'scripts/*.mts', 'www/scripts/*.tsx'],
+    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'scripts/*.mts', 'www/scripts/*.tsx', '.agents/**/*.mjs'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
@@ -434,16 +434,23 @@ const settings = [
   },
 ];
 
+/*
+ * New objects, arrays, functions and JSX elements passed as props to React components create a new reference
+ * on every render, which defeats `React.memo`, `useMemo` dependencies and Redux selector caching.
+ * Native elements (`<div>`, `<path>`, ...) are exempt because React compares their props anyway.
+ *
+ * Existing violations are recorded in `eslint-suppressions.json`, see the `typeSafety` comment below.
+ * See .agents/skills/fix-perf-violation/SKILL.md for how to fix them.
+ */
 const perfOptimization = {
-  name: 'perf-optimization-examples',
-  files: ['./www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx'],
+  name: 'x/react-perf',
+  files: ['src/**/*.tsx', 'www/**/*.tsx'],
   plugins: { 'react-perf': reactPerf },
   rules: {
-    // new object as prop creates a new reference on each render - but we can memo this one
-    // 'react-perf/jsx-no-new-object-as-prop': 'error',
-    'react-perf/jsx-no-new-array-as-prop': 'error',
-    'react-perf/jsx-no-new-function-as-prop': 'error',
-    'react-perf/jsx-no-jsx-as-prop': 'error',
+    'react-perf/jsx-no-new-object-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-new-array-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-new-function-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-jsx-as-prop': ['error', { nativeAllowList: 'all' }],
   },
 };
 
@@ -487,9 +494,19 @@ const jsdocConfig = [
   },
 ];
 
-const neverAny = {
-  name: 'no-any/config',
-  files: ['src/util/scale/**'],
+/*
+ * Type-safety escape hatches: `any`, `as` type assertions (except `as const`), and `!` non-null assertions.
+ * See .agents/skills/typescript/SKILL.md for alternatives.
+ *
+ * These rules apply everywhere, but existing violations are recorded in `eslint-suppressions.json`.
+ * The suppressions file is a ratchet:
+ * - adding a new violation fails lint,
+ * - fixing a violation also fails lint until you run `npm run lint -- --prune-suppressions`,
+ * - CI (`npm run check-eslint-suppressions`) fails if the total number of suppressions grows.
+ */
+const typeSafety = {
+  name: 'x/type-safety',
+  files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/ban-ts-comment': 'error',
@@ -499,6 +516,22 @@ const neverAny = {
         assertionStyle: 'never',
       },
     ],
+    '@typescript-eslint/no-non-null-assertion': 'error',
+  },
+};
+
+/*
+ * `cloneElement` overrides props of elements passed in by the user, which hides the data flow.
+ * Render a new element with explicit props instead.
+ *
+ * Existing violations are recorded in `eslint-suppressions.json`, see the `typeSafety` comment above.
+ */
+const noCloneElement = {
+  name: 'x/no-clone-element',
+  files: allFiles,
+  plugins: { recharts: rechartsPlugin },
+  rules: {
+    'recharts/no-clone-element': 'error',
   },
 };
 
@@ -531,5 +564,6 @@ export default [
   ...jsdocConfig,
   generatedApiDocsOverrides,
   perfOptimization,
-  neverAny,
+  typeSafety,
+  noCloneElement,
 ];

@@ -5,3 +5,9 @@ testWithThemes('Line theme', async ({ mountStory }) => {
 
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Line fill and stroke variants', async ({ mountStory }) => {
+  const component = await mountStory('theme/LineTheme/LineFillStrokeVariants');
+
+  await expect(component).toHaveScreenshot();
+});

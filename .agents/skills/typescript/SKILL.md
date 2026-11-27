@@ -107,7 +107,12 @@ but be warned that it might be a non-trivial amount of work.
 To help you with writing strong types, we have the following tools available:
 
 - TypeScript settings in `tsconfig.json` that enforce strict type checking. Strict mode is already enabled in the root config file. Some subdirectories have their own `tsconfig.json` files that override some of the strict settings.
-- ESLint rules that enforce best practices for TypeScript. We use `@typescript-eslint` plugin to enforce these rules. In particular the `neverAny` rule is enabled to prevent the use of `any` type but only in certain files/directories; see `eslint.config.mjs` file for details. Please strongly consider enabling this rule in more files/directories as you work on them, and definitely for new files/directories.
+- ESLint rules that enforce best practices for TypeScript, from the `@typescript-eslint` plugin: `no-explicit-any`, `consistent-type-assertions` (no `as` except `as const`), `no-non-null-assertion` (no `!`), and `ban-ts-comment` (no `@ts-ignore`, and `@ts-expect-error` needs a description). They apply to all TypeScript files; see the `typeSafety` block in `eslint.config.mjs`.
+- `eslint-suppressions.json` lists the existing violations, counted per file and rule, so that lint passes on old code. It is a ratchet:
+  - Never add new violations to it, and never run `eslint --suppress-all` or `--suppress-rule`. CI (`npm run check-eslint-suppressions`) fails if any rule's total count grows.
+  - If lint reports a violation in a file you touched, fix it. Once a file has more violations than its suppressed count, ESLint reports all of them, including the old ones, so the line it points at may not be the one you added.
+  - When you fix a suppressed violation, lint fails with "There are suppressions left that do not occur anymore". Run `npm run lint -- --prune-suppressions` and commit the updated file.
+  - To work through the existing violations one target at a time, use the `fix-type-violation` skill.
 - You have already seen `isNotNil` helper available in `utils/DataUtils` that can be used to filter out null or undefined values from arrays, which can help with type inference. `isNullish` also exists in the same file, checking for the opposite.
 - `isWellBehavedNumber` and `isPositiveNumber` are two other popular helpers, available in `utils/isWellBehavedNumber.ts`
 - `assertNotNull` is super useful helper that throws an error if the value is null or undefined. Only available for tests in `test/helper/assertNotNull.ts`.

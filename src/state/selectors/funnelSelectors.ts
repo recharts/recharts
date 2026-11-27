@@ -1,14 +1,17 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
-import { computeFunnelTrapezoids, FunnelTrapezoidItem } from '../../cartesian/Funnel';
+import { withEntryFillColor } from '../../fill/fillDefinitions';
+import { computeFunnelTrapezoids, FunnelTrapezoidItem, getFunnelEntryColor } from '../../cartesian/Funnel';
+import { LegendPayload } from '../../component/DefaultLegendContent';
+import { getTooltipNameProp } from '../../util/ChartUtils';
+import { LegendType, ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
-import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 import { GraphicalItemId } from '../graphicalItemsSlice';
-import { hasOwnStyles, UnthemedStyles } from '../../theme/dataEntryStyles';
+import { hasOwnColors, UnthemedColors } from '../../theme/dataEntryStyles';
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
@@ -27,11 +30,12 @@ export type ResolvedFunnelSettings = {
    */
   indexedStyles: ReadonlyArray<Record<string, any>>;
   /**
-   * Explicit style props without theme contributions. Items that define their own styles
-   * (in data or in Cell) get these instead of `indexedStyles`, so they ignore the theme completely.
+   * Explicit `fill` and `stroke` props without theme contributions. Items that define their own colors
+   * (in data or in Cell) get these over `indexedStyles`, so they drop the theme colors and keep the other theme styles.
    * Undefined when there is no active theme.
    */
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
+  legendType?: LegendType;
   id: GraphicalItemId;
 };
 
@@ -58,7 +62,7 @@ export const selectFunnelTrapezoids: (
       cells,
       presentationProps,
       indexedStyles,
-      unthemedStyles,
+      unthemedColors,
       id: graphicalItemId,
     },
     { chartData },
@@ -71,10 +75,12 @@ export const selectFunnelTrapezoids: (
     }
 
     const styleForEntry = (entry: unknown, cellProps: unknown, index: number) => {
-      if (unthemedStyles != null && (hasOwnStyles(entry) || hasOwnStyles(cellProps))) {
-        return unthemedStyles;
+      const themeStyles =
+        indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+      if (unthemedColors != null && (hasOwnColors(entry) || hasOwnColors(cellProps))) {
+        return { ...themeStyles, ...unthemedColors };
       }
-      return indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+      return themeStyles;
     };
 
     if (displayedData && displayedData.length) {
@@ -82,7 +88,8 @@ export const selectFunnelTrapezoids: (
         payload: entry,
         ...presentationProps,
         ...styleForEntry(entry, cells?.[index]?.props, index),
-        ...entry,
+        // a fill object paints through its definition, so the trapezoid only keeps its color
+        ...(entry != null && typeof entry === 'object' ? withEntryFillColor(entry, entry) : entry),
         ...(cells && cells[index] && cells[index].props),
       }));
     } else if (cells && cells.length) {
@@ -105,6 +112,34 @@ export const selectFunnelTrapezoids: (
       offset,
       customWidth,
       graphicalItemId,
+    });
+  },
+);
+
+export const selectFunnelLegend: (
+  state: RechartsRootState,
+  funnelSettings: ResolvedFunnelSettings,
+) => ReadonlyArray<LegendPayload> | undefined = createSelector(
+  [selectFunnelTrapezoids, pickFunnelSettings],
+  (
+    trapezoids: ReadonlyArray<FunnelTrapezoidItem>,
+    { dataKey, legendType }: ResolvedFunnelSettings,
+  ): ReadonlyArray<LegendPayload> | undefined => {
+    if (trapezoids == null || trapezoids.length === 0) {
+      return undefined;
+    }
+    return trapezoids.map((item): LegendPayload => {
+      const rawPayload =
+        item.payload != null && typeof item.payload === 'object' && 'payload' in item.payload
+          ? item.payload.payload
+          : item.payload;
+      return {
+        value: getTooltipNameProp(item.name, dataKey),
+        dataKey,
+        color: getFunnelEntryColor(item),
+        payload: rawPayload,
+        type: legendType,
+      };
     });
   },
 );

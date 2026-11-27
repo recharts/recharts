@@ -1615,8 +1615,7 @@ describe('<Legend />', () => {
         {
           wrapperStyle: { left: '31px', right: '33px', bottom: '37px', top: '41px' },
           name: 'all provided',
-          expectedStyle:
-            'position: absolute; width: 470px; height: auto; left: 31px; right: 33px; bottom: 37px; top: 41px;',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; inset: 41px 33px 37px 31px;',
         },
         {
           wrapperStyle: { left: '31px', right: '33px', bottom: '37px' },
@@ -2151,7 +2150,6 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
-          {/* @ts-expect-error Indeed Typescript is correct, Area requires a dataKey */}
           <Area />
         </AreaChart>,
       );

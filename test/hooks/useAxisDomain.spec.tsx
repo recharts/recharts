@@ -66,7 +66,8 @@ describe('axis domain hooks', () => {
 
     it('should select YAxis numerical domain with explicit ID', () => {
       const { spy } = renderTestCase(() => useYAxisDomain('yAxis1'));
-      expectLastCalledWith(spy, [0, 9800]);
+      // the Line dataKey `uv` wins over the YAxis dataKey `pv`
+      expectLastCalledWith(spy, [0, 400]);
     });
 
     it('should return default XAxis domain when called without ID', () => {

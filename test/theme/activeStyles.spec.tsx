@@ -1,0 +1,368 @@
+import React, { ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import { act, fireEvent } from '@testing-library/react';
+import {
+  Bar,
+  BarChart,
+  Funnel,
+  FunnelChart,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
+import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../../src/theme/activeStyles';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { assertNotNull } from '../helper/assertNotNull';
+
+const theme: RechartsTheme = {
+  graphicalItems: [
+    { fill: 'purple', stroke: 'indigo', active: { fill: 'white', stroke: 'crimson', strokeWidth: 3 } },
+    { fill: 'teal', stroke: 'navy', active: { fill: 'black', stroke: 'orange', strokeWidth: 5 } },
+  ],
+};
+
+const data = [
+  { name: 'A', x: 1, y: 10, value: 30 },
+  { name: 'B', x: 2, y: 20, value: 20 },
+  { name: 'C', x: 3, y: 30, value: 10 },
+];
+
+const dataWithOwnStyles = [data[0], { ...data[1], fill: 'gold' }, data[2]];
+
+function renderActiveShape(chart: ReactNode, activeTheme: RechartsTheme | undefined = theme): SVGPathElement {
+  const { container } = rechartsTestRender(<RechartsThemeProvider value={activeTheme}>{chart}</RechartsThemeProvider>);
+  // Funnel does not read the Tooltip defaultIndex, so we hover over the trapezoid instead.
+  // https://github.com/recharts/recharts/issues/7945
+  const trapezoid = container.querySelectorAll('.recharts-funnel-trapezoid')[1];
+  if (trapezoid != null) {
+    fireEvent.mouseEnter(trapezoid);
+  }
+  // Bar switches to the active state one animation frame after the Tooltip becomes active.
+  act(() => {
+    vi.runOnlyPendingTimers();
+  });
+  const activeShapes = container.querySelectorAll<SVGPathElement>(
+    '.recharts-active-shape path, .recharts-active-bar path',
+  );
+  expect(activeShapes).toHaveLength(1);
+  const activeShape = activeShapes[0];
+  assertNotNull(activeShape);
+  return activeShape;
+}
+
+type ActiveOption = boolean | Record<string, unknown> | (() => React.ReactElement);
+type ChartOptions = {
+  active: ActiveOption;
+  itemProps?: { fill?: string; stroke?: string; strokeWidth?: number };
+  chartData?: ReadonlyArray<object>;
+};
+
+const customShape = () => (
+  <g className="custom-shape">
+    <path fill="lime" />
+  </g>
+);
+
+/*
+ * All charts make the data entry at index 1 active.
+ * `expected` is the `active` slice of the theme that the active shape should receive:
+ * Bar, Scatter, and RadialBar select the theme by dataKey, which is the first slice for a single graphical item.
+ * Pie and Funnel select the theme by the index of the data entry.
+ */
+const testCases: ReadonlyArray<{
+  name: string;
+  expected: { fill: string; stroke: string; strokeWidth: string };
+  inactive: { fill: string; stroke: string };
+  renderChart: (options: ChartOptions) => ReactNode;
+}> = [
+  {
+    name: 'Bar',
+    expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
+    inactive: { fill: 'purple', stroke: 'indigo' },
+    renderChart: ({ active, itemProps, chartData = data }) => (
+      <BarChart width={400} height={400} data={chartData}>
+        <Bar dataKey="value" isAnimationActive={false} activeBar={active} {...itemProps} />
+        <Tooltip defaultIndex={1} />
+      </BarChart>
+    ),
+  },
+  {
+    name: 'Scatter',
+    expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
+    inactive: { fill: 'purple', stroke: 'indigo' },
+    renderChart: ({ active, itemProps, chartData = data }) => (
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter data={chartData} dataKey="y" isAnimationActive={false} activeShape={active} {...itemProps} />
+        <Tooltip defaultIndex={1} />
+      </ScatterChart>
+    ),
+  },
+  {
+    name: 'RadialBar',
+    expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
+    inactive: { fill: 'purple', stroke: 'indigo' },
+    renderChart: ({ active, itemProps, chartData = data }) => (
+      <RadialBarChart width={400} height={400} data={chartData}>
+        <RadialBar dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
+        <Tooltip defaultIndex={1} />
+      </RadialBarChart>
+    ),
+  },
+  {
+    name: 'Pie',
+    expected: { fill: 'black', stroke: 'orange', strokeWidth: '5' },
+    inactive: { fill: 'teal', stroke: 'navy' },
+    renderChart: ({ active, itemProps, chartData = data }) => (
+      <PieChart width={400} height={400}>
+        <Pie data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
+        <Tooltip defaultIndex={1} />
+      </PieChart>
+    ),
+  },
+  {
+    name: 'Funnel',
+    expected: { fill: 'black', stroke: 'orange', strokeWidth: '5' },
+    inactive: { fill: 'teal', stroke: 'navy' },
+    renderChart: ({ active, itemProps, chartData = data }) => (
+      <FunnelChart width={400} height={400}>
+        <Funnel data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
+        <Tooltip />
+      </FunnelChart>
+    ),
+  },
+];
+
+describe.each(testCases)('theme active styles in $name', ({ expected, inactive, renderChart }) => {
+  it('applies the theme active styles when the active shape is enabled with true', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true }));
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('applies the theme active styles when the active shape is an object without colors', () => {
+    const activeShape = renderActiveShape(renderChart({ active: { className: 'my-active-shape' } }));
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('merges the other styles of the active shape object with the theme active styles', () => {
+    const activeShape = renderActiveShape(renderChart({ active: { strokeWidth: 9 } }));
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', '9');
+  });
+
+  it('ignores the theme active colors, and keeps the other theme active styles, when the active shape object has its own color', () => {
+    const activeShape = renderActiveShape(renderChart({ active: { fill: 'lime' } }));
+    expect(activeShape).toHaveAttribute('fill', 'lime');
+    expect(activeShape).toHaveAttribute('stroke', inactive.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('ignores the theme active styles when the active shape is a custom function', () => {
+    const activeShape = renderActiveShape(renderChart({ active: customShape }));
+    expect(activeShape).toHaveAttribute('fill', 'lime');
+    expect(activeShape).not.toHaveAttribute('stroke');
+  });
+
+  it('keeps its own colors, and the other theme active styles, when the graphical item has its own color', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { fill: 'lime' } }));
+    expect(activeShape).toHaveAttribute('fill', 'lime');
+    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).not.toHaveAttribute('stroke', inactive.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('applies the theme active styles over the other style props of the graphical item', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { strokeWidth: 9 } }));
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('keeps its own colors, and the other theme active styles, when the data entry has its own color', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true, chartData: dataWithOwnStyles }));
+    expect(activeShape).toHaveAttribute('fill', 'gold');
+    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).not.toHaveAttribute('stroke', inactive.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('keeps the theme active colors when the graphical item sets only styles without a color', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { strokeWidth: 9 } }));
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+  });
+
+  it('keeps the inactive styles when the theme has no active styles', () => {
+    const themeWithoutActive: RechartsTheme = {
+      graphicalItems: theme.graphicalItems.map(({ fill, stroke }) => ({ fill, stroke })),
+    };
+    const activeShape = renderActiveShape(renderChart({ active: true }), themeWithoutActive);
+    expect(activeShape).toHaveAttribute('fill', inactive.fill);
+    expect(activeShape).toHaveAttribute('stroke', inactive.stroke);
+  });
+});
+
+describe('theme active styles in Bar with a custom shape', () => {
+  it('ignores the theme active styles when activeBar is true and the shape is a custom function', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <BarChart width={400} height={400} data={data}>
+          <Bar
+            dataKey="value"
+            isAnimationActive={false}
+            activeBar
+            shape={({ fill, stroke }) => <path className="custom-bar" fill={fill} stroke={stroke} />}
+          />
+          <Tooltip defaultIndex={1} />
+        </BarChart>
+      </RechartsThemeProvider>,
+    );
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    const activeBar = container.querySelector('.recharts-active-bar .custom-bar');
+    assertNotNull(activeBar);
+    expect(activeBar).toHaveAttribute('fill', 'purple');
+    expect(activeBar).toHaveAttribute('stroke', 'indigo');
+  });
+});
+
+describe('theme active styles in Pie with a custom shape', () => {
+  // Pie selects the theme by the index of the data entry, so the active sector at index 1 has the second slice.
+  const ownColors = { fill: 'teal', stroke: 'navy' };
+
+  function renderPieWithCustomShape(pieProps: Partial<React.ComponentProps<typeof Pie>>) {
+    const shape = vi.fn(({ fill, stroke, strokeWidth, isActive }) => (
+      <path
+        className={isActive ? 'custom-sector custom-sector-active' : 'custom-sector'}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+      />
+    ));
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <PieChart width={400} height={400}>
+          <Pie data={data} dataKey="value" isAnimationActive={false} shape={shape} {...pieProps} />
+          <Tooltip defaultIndex={1} />
+        </PieChart>
+      </RechartsThemeProvider>,
+    );
+    return { container, shape };
+  }
+
+  it('ignores the theme active styles when the shape is a custom function', () => {
+    const { container, shape } = renderPieWithCustomShape({});
+    expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
+    const activeSector = container.querySelector('.recharts-active-shape .custom-sector-active');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', ownColors.fill);
+    expect(activeSector).toHaveAttribute('stroke', ownColors.stroke);
+    expect(activeSector).not.toHaveAttribute('stroke-width');
+  });
+
+  it('renders the custom shape for the active sector, without the theme active styles, when activeShape is true', () => {
+    const { container, shape } = renderPieWithCustomShape({ activeShape: true });
+    expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
+    const activeSector = container.querySelector('.recharts-active-shape .custom-sector-active');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', ownColors.fill);
+    expect(activeSector).toHaveAttribute('stroke', ownColors.stroke);
+    expect(container.querySelectorAll('.recharts-pie-sector path.recharts-sector')).toHaveLength(0);
+  });
+
+  it('still applies the theme active styles to the default shape without activeShape', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <PieChart width={400} height={400}>
+          <Pie data={data} dataKey="value" isAnimationActive={false} />
+          <Tooltip defaultIndex={1} />
+        </PieChart>
+      </RechartsThemeProvider>,
+    );
+    const activeSector = container.querySelector('.recharts-active-shape path.recharts-sector');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', 'black');
+    expect(activeSector).toHaveAttribute('stroke', 'orange');
+    expect(activeSector).toHaveAttribute('stroke-width', '5');
+  });
+});
+
+describe('resolveThemedActiveStyles', () => {
+  const activeStyle = { fill: 'white', stroke: 'black', strokeWidth: 2 };
+
+  it('returns undefined without active styles', () => {
+    expect(resolveThemedActiveStyles(undefined, {})).toBeUndefined();
+  });
+
+  it.each([undefined, null, {}, { r: 5 }])('returns the active styles as they are for %j', ownStyles => {
+    expect(resolveThemedActiveStyles(activeStyle, ownStyles)).toBe(activeStyle);
+  });
+
+  it.each([{ fill: 'red' }, { stroke: 'red' }])(
+    'leaves out the fill and stroke when own styles have a color: %j',
+    ownStyles => {
+      expect(resolveThemedActiveStyles(activeStyle, ownStyles)).toEqual({ strokeWidth: 2 });
+    },
+  );
+
+  it('returns undefined when own styles override everything', () => {
+    expect(resolveThemedActiveStyles(activeStyle, { fill: 'red', strokeWidth: 5 })).toBeUndefined();
+  });
+
+  it('leaves out the styles that own styles override', () => {
+    expect(resolveThemedActiveStyles(activeStyle, { strokeWidth: 5, fillOpacity: 0.5 })).toEqual({
+      fill: 'white',
+      stroke: 'black',
+    });
+  });
+});
+
+describe('getActiveStyleOverrides', () => {
+  const styles = { fill: 'white', strokeWidth: 2 };
+
+  it.each([true, {}, { className: 'active' }])('returns the theme styles for %j', option => {
+    expect(getActiveStyleOverrides(option, styles)).toBe(styles);
+  });
+
+  it.each([{ fill: 'red' }, { stroke: 'red' }])('returns the theme styles without colors for %j', option => {
+    expect(getActiveStyleOverrides(option, styles)).toEqual({ strokeWidth: 2 });
+  });
+
+  it.each([false, undefined, null, { fill: 'red', strokeWidth: 5 }, () => null, <g key="element" />])(
+    'returns undefined for %j',
+    option => {
+      expect(getActiveStyleOverrides(option, styles)).toBeUndefined();
+    },
+  );
+
+  it('leaves out the styles that the option object overrides', () => {
+    expect(getActiveStyleOverrides({ strokeWidth: 5 }, styles)).toEqual({ fill: 'white' });
+  });
+
+  it('returns undefined without theme styles', () => {
+    expect(getActiveStyleOverrides(true, undefined)).toBeUndefined();
+  });
+
+  it.each([{ fill: 'gold' }, { stroke: 'gold' }])('leaves out the theme colors for a data entry with %j', entry => {
+    expect(getActiveStyleOverrides(true, styles, entry)).toEqual({ strokeWidth: 2 });
+  });
+
+  it.each([undefined, { name: 'A' }, { strokeWidth: 9 }])('keeps the theme colors for a data entry %j', entry => {
+    expect(getActiveStyleOverrides(true, styles, entry)).toBe(styles);
+  });
+});

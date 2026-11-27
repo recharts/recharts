@@ -74,6 +74,7 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
  * In scales that are not banded, this parameter is ignored.
  *
  * @inline
+ * @public
  */
 export type BandPosition = 'start' | 'middle' | 'end';
 

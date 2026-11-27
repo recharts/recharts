@@ -2,18 +2,25 @@ import { createSelector } from 'reselect';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { AxisId, BaseCartesianAxis } from '../cartesianAxisSlice';
-import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataSliceIgnoringIndexes } from './dataSelectors';
+import {
+  selectChartDataAndAlwaysIgnoreIndexes,
+  selectChartDataSliceIgnoringIndexes,
+  selectChartDataWithIndexes,
+} from './dataSelectors';
 import {
   AppliedChartDataWithErrorDomain,
   combineAppliedValues,
   combineAxisDomain,
   combineAxisDomainWithNiceTicks,
   combineDisplayedData,
+  combineDomainOfStackGroups,
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   combineGraphicalItemsData,
   combineGraphicalItemsSettings,
   combineNiceTicks,
   combineNumericalDomain,
+  combineStackGroups,
+  combineStackOffsetTypeOfAxis,
   itemAxisPredicate,
   selectAllErrorBarSettings,
   selectBaseAxis,
@@ -21,15 +28,21 @@ import {
   selectDomainFromUserPreference,
   selectRealScaleType,
   selectRenderableAxisSettings,
+  selectTooltipAxis,
 } from './axisSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
-import { CategoricalDomain, NumberDomain } from '../../util/types';
+import { CategoricalDomain, LayoutType, NumberDomain, StackOffsetType } from '../../util/types';
+import { getDataKeyOnAxis } from './effectiveDataKeySelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getValueByDataKey } from '../../util/ChartUtils';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
-import { selectStackOffsetType } from './rootPropsSelectors';
+import { selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
 import { combineCheckedDomain } from './combiners/combineCheckedDomain';
+import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
+import { isStackedGraphicalItem, type StackedGraphicalItem } from '../types/StackedGraphicalItem';
+import { AllStackGroups } from '../../util/stacks/stackTypes';
+import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 
 export type PolarAxisType = 'angleAxis' | 'radiusAxis';
 
@@ -70,7 +83,7 @@ export const selectPolarAppliedValues: (
   axisType: PolarAxisType,
   axisId: AxisId,
 ) => AppliedChartData = createSelector(
-  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings],
+  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings, selectChartLayout, pickAxisType],
   combineAppliedValues,
 );
 
@@ -79,17 +92,22 @@ export const selectAllPolarAppliedNumericalValues: (
   axisType: PolarAxisType,
   axisId: AxisId,
 ) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
-  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings],
+  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings, selectChartLayout, pickAxisType],
   (
     data: ChartData,
     axisSettings: BaseCartesianAxis,
     items: ReadonlyArray<PolarGraphicalItemSettings>,
+    layout: LayoutType,
+    axisType: PolarAxisType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
     if (items.length > 0) {
       return data
         .flatMap(entry => {
           return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-            const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+            const valueByDataKey: unknown = getValueByDataKey(
+              entry,
+              getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType),
+            );
             return {
               value: valueByDataKey,
               errorDomain: [], // polar charts do not have error bars
@@ -110,6 +128,58 @@ export const selectAllPolarAppliedNumericalValues: (
 
 const unsupportedInPolarChart = (): undefined => undefined;
 
+const selectStackedPolarItems: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => ReadonlyArray<StackedGraphicalItem> = createSelector(
+  [selectPolarItemsSettings],
+  (allPolarItems: ReadonlyArray<PolarGraphicalItemSettings>): ReadonlyArray<StackedGraphicalItem> =>
+    allPolarItems.filter(isStackedGraphicalItem),
+);
+
+const selectPolarCombinedStackedData: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => DisplayedStackedData = createSelector(
+  [selectStackedPolarItems, selectChartDataAndAlwaysIgnoreIndexes, selectTooltipAxis],
+  combineDisplayedStackedData,
+);
+
+/**
+ * Stack groups are groups of polar graphical items that stack on each other.
+ * Graphical items without a stack ID are not present in the stack groups.
+ */
+export const selectPolarStackGroups: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => AllStackGroups | undefined = createSelector(
+  [selectPolarCombinedStackedData, selectStackedPolarItems, selectStackOffsetType, selectReverseStackOrder],
+  combineStackGroups,
+);
+
+const selectDomainOfPolarStackGroups: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  axisId: AxisId,
+) => NumberDomain | undefined = createSelector(
+  [
+    selectPolarStackGroups,
+    selectChartDataWithIndexes,
+    pickAxisType,
+    selectDomainFromUserPreference,
+    selectAllErrorBarSettings,
+  ],
+  combineDomainOfStackGroups,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: numberDomainEqualityCheck,
+    },
+  },
+);
+
 const selectDomainOfAllPolarAppliedNumericalValues: (
   state: RechartsRootState,
   axisType: PolarAxisType,
@@ -122,6 +192,7 @@ const selectDomainOfAllPolarAppliedNumericalValues: (
     selectAllErrorBarSettings,
     pickAxisType,
     selectChartDataSliceIgnoringIndexes,
+    selectChartLayout,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
 );
@@ -135,13 +206,22 @@ const selectPolarNumericalDomain: (
     selectBaseAxis,
     selectDomainDefinition,
     selectDomainFromUserPreference,
-    unsupportedInPolarChart,
+    selectDomainOfPolarStackGroups,
     selectDomainOfAllPolarAppliedNumericalValues,
     unsupportedInPolarChart,
     selectChartLayout,
     pickAxisType,
   ],
   combineNumericalDomain,
+);
+
+const selectPolarStackOffsetTypeOfAxis: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => StackOffsetType = createSelector(
+  [selectStackOffsetType, selectUnfilteredPolarItems, selectAxisPredicate],
+  combineStackOffsetTypeOfAxis,
 );
 
 export const selectPolarAxisDomain: (
@@ -154,7 +234,7 @@ export const selectPolarAxisDomain: (
     selectChartLayout,
     selectPolarDisplayedData,
     selectPolarAppliedValues,
-    selectStackOffsetType,
+    selectPolarStackOffsetTypeOfAxis,
     pickAxisType,
     selectPolarNumericalDomain,
   ],

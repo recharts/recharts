@@ -228,6 +228,7 @@ export const calculateStep = (
  * @param allowDecimals Allow the ticks to be decimals or not
  * @param niceTicksMode The algorithm to use for calculating nice ticks.
  * @return array of ticks
+ * @public
  */
 export const getNiceTickValues = (
   [min, max]: NumberDomain,
@@ -242,8 +243,8 @@ export const getNiceTickValues = (
   if (cormin === -Infinity || cormax === Infinity) {
     const values: Array<number> =
       cormax === Infinity
-        ? [cormin, ...Array(tickCount - 1).fill(Infinity)]
-        : [...Array(tickCount - 1).fill(-Infinity), cormax];
+        ? [cormin, ...Array(count - 1).fill(Infinity)]
+        : [...Array(count - 1).fill(-Infinity), cormax];
 
     return min > max ? values.reverse() : values;
   }

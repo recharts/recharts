@@ -8,6 +8,9 @@ import {
   Line,
   LineChart,
   PieChart,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
   ReferenceLine,
   Surface,
   YAxis,
@@ -606,6 +609,35 @@ describe('<Label />', () => {
     expect(screen.getByText(/400/i)).toBeInTheDocument();
   });
 
+  describe('label prop as a number', () => {
+    const getLabelTexts = (container: Element) =>
+      Array.from(container.querySelectorAll('.recharts-label')).map(label => label.textContent);
+
+    it.each([0, 1])('should render label={%s} on an axis and a ReferenceLine', value => {
+      const { container } = rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis label={value} />
+          <Line dataKey="uv" />
+          <ReferenceLine y={300} label={value} />
+        </LineChart>,
+      );
+
+      expect(getLabelTexts(container)).toEqual([String(value), String(value)]);
+    });
+
+    it.each([false, ''])('should not render label={%j}', value => {
+      const { container } = rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis label={value} />
+          <Line dataKey="uv" />
+          <ReferenceLine y={300} label={value} />
+        </LineChart>,
+      );
+
+      expect(getLabelTexts(container)).toEqual([]);
+    });
+  });
+
   describe('custom label on an axis', () => {
     it('should provide computed x and y coordinates to a custom label element', () => {
       const received: Array<LabelProps> = [];
@@ -689,6 +721,24 @@ describe('<Label />', () => {
           {},
         );
       });
+    });
+  });
+
+  describe('in PolarRadiusAxis', () => {
+    it('should render position=center in the center of the polar chart when cy is set', () => {
+      const { container } = rechartsTestRender(
+        <RadialBarChart width={500} height={500} data={data} cy="70%" startAngle={180} endAngle={0}>
+          <RadialBar dataKey="uv" />
+          <PolarRadiusAxis tick={false} axisLine={false}>
+            <Label position="center" value="center label" />
+          </PolarRadiusAxis>
+        </RadialBarChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      assertNotNull(label);
+      expect(label).toHaveAttribute('x', '250');
+      expect(label).toHaveAttribute('y', '350');
     });
   });
 

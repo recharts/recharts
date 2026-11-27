@@ -8,4 +8,5 @@ export const expectedInBundle = [
   'useChartWidth',
   'usePlotArea',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;

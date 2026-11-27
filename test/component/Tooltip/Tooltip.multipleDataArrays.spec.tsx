@@ -3,6 +3,7 @@
  * https://codesandbox.io/p/sandbox/recharts-issue-template-forked-yhhnky
  */
 import React from 'react';
+import { render } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { ComposedChart, Legend, Line, Tooltip, useActiveTooltipDataPoints, XAxis, YAxis } from '../../../src';
@@ -13,7 +14,7 @@ import {
   selectDisplayedData,
 } from '../../../src/state/selectors/axisSelectors';
 import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
-import { showTooltipOnCoordinate } from './tooltipTestHelpers';
+import { expectTooltipPayload, showTooltipOnCoordinate } from './tooltipTestHelpers';
 import { composedChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
@@ -176,6 +177,69 @@ describe('Tooltip in chart with multiple data arrays', () => {
     it('should highlight the first dot', () => {
       const { spy } = renderTestCase(selectActiveTooltipIndex);
       expectLastCalledWith(spy, '0');
+    });
+  });
+
+  describe('when a series has no point at the hovered label', () => {
+    // https://github.com/recharts/recharts/issues/7903
+    it('should leave the series out of the tooltip and draw no active dot for it on a number axis', () => {
+      const seriesA = [0, 1, 2, 3, 4, 5].map(x => ({ x, value: x + 1 }));
+      const seriesB = [3, 4, 5].map(x => ({ x, value: x + 2 }));
+      const { container } = render(
+        <ComposedChart width={500} height={300}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="value" name="A" data={seriesA} />
+          <Line dataKey="value" name="B" data={seriesB} />
+        </ComposedChart>,
+      );
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 65, clientY: 100 });
+      expectTooltipPayload(container, '0', ['A : 1']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 118.75, clientY: 100 });
+      expectTooltipPayload(container, '1', ['A : 2']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 172.5, clientY: 100 });
+      expectTooltipPayload(container, '2', ['A : 3']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 226.25, clientY: 100 });
+      expectTooltipPayload(container, '3', ['A : 4', 'B : 5']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+    });
+
+    it('should leave the series out of the tooltip on a category axis with allowDuplicatedCategory=false', () => {
+      const seriesA = [
+        { name: 'a', value: 1 },
+        { name: 'b', value: 2 },
+        { name: 'c', value: 3 },
+        { name: 'd', value: 4 },
+      ];
+      const seriesB = [
+        { name: 'c', value: 10 },
+        { name: 'd', value: 20 },
+      ];
+      const { container } = render(
+        <ComposedChart width={500} height={300}>
+          <XAxis dataKey="name" allowDuplicatedCategory={false} />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="value" name="A" data={seriesA} />
+          <Line dataKey="value" name="B" data={seriesB} />
+        </ComposedChart>,
+      );
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 118.75, clientY: 100 });
+      expectTooltipPayload(container, 'a', ['A : 1']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 333.75, clientY: 100 });
+      expectTooltipPayload(container, 'c', ['A : 3', 'B : 10']);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
     });
   });
 });

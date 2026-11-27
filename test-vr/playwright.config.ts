@@ -72,8 +72,12 @@ export default defineConfig({
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
+  /*
+   * Retry on CI only. Retries record a trace and report flaky tests to flakiness.io,
+   * but a screenshot that only matches on retry is still a bug, so it fails the run.
+   */
   retries: process.env.CI ? 2 : 0,
+  failOnFlakyTests: !!process.env.CI,
   /*
    * In CI each browser project runs as its own parallel job, so 2 workers per job
    * makes good use of the 2-core GitHub runner without overloading it.
@@ -144,6 +148,15 @@ export default defineConfig({
      * component tests typically touch between tests.
      */
     reuseContext: true,
+
+    /*
+     * Recharts animations default to isAnimationActive="auto", which honors prefers-reduced-motion.
+     * Screenshots should show the final state of the chart, not the animation itself.
+     * When we let the animations run, WebKit may repaint the finished chart with slightly different
+     * anti-aliasing depending on when other animations on the page complete,
+     * which made the tests flaky.
+     */
+    contextOptions: { reducedMotion: 'reduce' },
   },
 
   /* Configure projects for major browsers */

@@ -1035,6 +1035,83 @@ describe('Tooltip synchronization', () => {
       });
     });
   });
+
+  describe('when a synchronised chart unmounts', () => {
+    function Charts({
+      showA = true,
+      showB = true,
+      activeA,
+    }: {
+      showA?: boolean;
+      showB?: boolean;
+      activeA?: boolean;
+    }): ReactNode {
+      const chart = (className: string, active?: boolean): ReactNode => (
+        <div className={className}>
+          <LineChart width={400} height={400} data={PageData} syncId="unmount-sync">
+            <XAxis dataKey="name" />
+            <Line isAnimationActive={false} dataKey="uv" />
+            <Tooltip active={active} />
+          </LineChart>
+        </div>
+      );
+      return (
+        <>
+          {showA && chart('chart-a', activeA)}
+          {showB && chart('chart-b')}
+          {chart('chart-c')}
+        </>
+      );
+    }
+
+    function getChart(container: Element, className: string): Element {
+      const chart = container.querySelector(`.${className}`);
+      assertNotNull(chart);
+      return chart;
+    }
+
+    it('should hide the tooltip and cursor in the other charts when the hovered chart unmounts', () => {
+      const { container, rerender, debug } = render(<Charts />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page C', ['uv : 300']);
+      expect(getChart(container, 'chart-b').querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+      // the pointer is still over chart A when it goes away, so it never gets a mouseleave
+      rerender(<Charts showA={false} />);
+
+      expectTooltipNotVisible(getChart(container, 'chart-b'));
+      expectTooltipNotVisible(getChart(container, 'chart-c'));
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+    });
+
+    it('should keep the synchronised tooltip when a chart that only receives it unmounts', () => {
+      const { container, rerender, debug } = render(<Charts />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+
+      rerender(<Charts showB={false} />);
+
+      expectTooltipPayload(getChart(container, 'chart-a'), 'Page C', ['uv : 300']);
+      expectTooltipPayload(getChart(container, 'chart-c'), 'Page C', ['uv : 300']);
+    });
+
+    it('should keep the tooltip of the current source when a chart that sent one earlier unmounts', () => {
+      const { container, rerender, debug } = render(<Charts activeA />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector);
+      showTooltipOnCoordinate(
+        getChart(container, 'chart-c'),
+        lineChartMouseHoverTooltipSelector,
+        { clientX: 100, clientY: 100 },
+        debug,
+      );
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page B', ['uv : 300']);
+
+      rerender(<Charts activeA showA={false} />);
+
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page B', ['uv : 300']);
+      expect(getChart(container, 'chart-b').querySelector('.recharts-tooltip-cursor')).toBeVisible();
+    });
+  });
 });
 
 describe('brush synchronization', () => {
@@ -1115,6 +1192,87 @@ describe('Cursor synchronization', () => {
       expect(wrapperTwo.querySelector('.recharts-tooltip-cursor')).not.toBeNull();
       expect(wrapperTwo.querySelector('.recharts-tooltip-cursor')).toBeVisible();
     });
+  });
+});
+
+describe('Cursor alignment between charts with different scales', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  function getBarCursor(barChartWrapper: Element): { x: number; width: number; y: number; height: number } {
+    const cursor = barChartWrapper.querySelector('.recharts-tooltip-cursor');
+    assertNotNull(cursor);
+    return {
+      x: Number(cursor.getAttribute('x')),
+      y: Number(cursor.getAttribute('y')),
+      width: Number(cursor.getAttribute('width')),
+      height: Number(cursor.getAttribute('height')),
+    };
+  }
+
+  it('should render the BarChart cursor in the same place when hovering directly and when synchronised from a LineChart', () => {
+    const { container } = render(
+      <>
+        <LineChart width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis dataKey="name" />
+          <Line dataKey="uv" />
+          <Tooltip />
+        </LineChart>
+        <BarChart width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis dataKey="name" />
+          <Bar dataKey="uv" />
+          <Tooltip />
+        </BarChart>
+      </>,
+    );
+    const [lineChartWrapper, barChartWrapper] = Array.from(container.querySelectorAll('.recharts-wrapper'));
+    assertNotNull(lineChartWrapper);
+    assertNotNull(barChartWrapper);
+
+    showTooltipOnCoordinate(barChartWrapper, undefined, { clientX: 230, clientY: 100 });
+    const directCursor = getBarCursor(barChartWrapper);
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    fireEvent.mouseLeave(barChartWrapper);
+
+    showTooltipOnCoordinate(lineChartWrapper, undefined, { clientX: 230, clientY: 100 });
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    const synchronisedCursor = getBarCursor(barChartWrapper);
+
+    expect(synchronisedCursor).toEqual(directCursor);
+  });
+
+  it('should render the vertical BarChart cursor in the same place when hovering directly and when synchronised from a LineChart', () => {
+    const { container } = render(
+      <>
+        <LineChart layout="vertical" width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Line dataKey="uv" />
+          <Tooltip />
+        </LineChart>
+        <BarChart layout="vertical" width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Bar dataKey="uv" />
+          <Tooltip />
+        </BarChart>
+      </>,
+    );
+    const [lineChartWrapper, barChartWrapper] = Array.from(container.querySelectorAll('.recharts-wrapper'));
+    assertNotNull(lineChartWrapper);
+    assertNotNull(barChartWrapper);
+
+    showTooltipOnCoordinate(barChartWrapper, undefined, { clientX: 200, clientY: 150 });
+    const directCursor = getBarCursor(barChartWrapper);
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    fireEvent.mouseLeave(barChartWrapper);
+
+    showTooltipOnCoordinate(lineChartWrapper, undefined, { clientX: 200, clientY: 150 });
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    const synchronisedCursor = getBarCursor(barChartWrapper);
+
+    expect(synchronisedCursor).toEqual(directCursor);
   });
 });
 

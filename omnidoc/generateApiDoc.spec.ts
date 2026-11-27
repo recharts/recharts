@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateApiDoc, processInlineLinks, simplifyOneType } from './generateApiDoc';
+import { escapeJsxBraces, generateApiDoc, simplifyOneType } from './generateApiDoc';
 import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
 
@@ -64,52 +64,18 @@ describe('simplifyOneType', () => {
   });
 });
 
-describe('processInlineLinks', () => {
-  it('should convert {@link url} to HTML anchor tag', () => {
-    const input = 'Check {@link https://example.com} for details';
-    const expected = 'Check <a href="https://example.com">https://example.com</a> for details';
-    expect(processInlineLinks(input)).toBe(expected);
+describe('escapeJsxBraces', () => {
+  it('should replace curly braces with HTML entities so that JSX does not read them as expressions', () => {
+    expect(escapeJsxBraces('<code>shared={true}</code>')).toBe('<code>shared=&#123;true&#125;</code>');
+    expect(escapeJsxBraces('<code>.dark { color-scheme: dark; }</code>')).toBe(
+      '<code>.dark &#123; color-scheme: dark; &#125;</code>',
+    );
   });
 
-  it('should convert {@link url text} to HTML anchor tag with custom text', () => {
-    const input = 'Check {@link https://example.com example site} for details';
-    const expected = 'Check <a href="https://example.com">example site</a> for details';
-    expect(processInlineLinks(input)).toBe(expected);
-  });
-
-  it('should handle {@ link} with space after @ symbol', () => {
-    const input = 'Uses {@ link https://developer.mozilla.org/API ResizeObserver} API';
-    const expected = 'Uses <a href="https://developer.mozilla.org/API">ResizeObserver</a> API';
-    expect(processInlineLinks(input)).toBe(expected);
-  });
-
-  it('should convert multiple inline links', () => {
-    const input = 'See {@link https://a.com A} and {@link https://b.com B}';
-    const expected = 'See <a href="https://a.com">A</a> and <a href="https://b.com">B</a>';
-    expect(processInlineLinks(input)).toBe(expected);
-  });
-
-  it('should leave text without links unchanged', () => {
-    const input = 'Just plain text without any links';
-    expect(processInlineLinks(input)).toBe(input);
-  });
-
-  it('should convert {@link ComponentName} to LinkToApi for known Recharts components', () => {
-    const input = 'This component uses {@link Rectangle} for rendering';
-    const expected = 'This component uses <LinkToApi>Rectangle</LinkToApi> for rendering';
-    expect(processInlineLinks(input, ['Rectangle'])).toBe(expected);
-  });
-
-  it('should handle multiple component links in the same text', () => {
-    const input = 'Use {@link Rectangle} or {@link Line} components';
-    const expected = 'Use <LinkToApi>Rectangle</LinkToApi> or <LinkToApi>Line</LinkToApi> components';
-    expect(processInlineLinks(input, ['Rectangle', 'Line'])).toBe(expected);
-  });
-
-  it('should not convert {@link ComponentName} if it is not a Recharts component', () => {
-    const input = 'See {@link SomeUnknownComponent}';
-    const expected = 'See <a href="SomeUnknownComponent">SomeUnknownComponent</a>';
-    expect(processInlineLinks(input, [])).toBe(expected);
+  it('should leave text without curly braces unchanged', () => {
+    expect(escapeJsxBraces('<p>See <LinkToApi>autoTheme</LinkToApi></p>')).toBe(
+      '<p>See <LinkToApi>autoTheme</LinkToApi></p>',
+    );
   });
 });
 

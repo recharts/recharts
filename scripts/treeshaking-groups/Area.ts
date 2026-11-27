@@ -12,10 +12,12 @@ export const expectedInBundle = [
   'Layer',
   'matchAppend',
   'matchByIndex',
+  'Symbols',
   'Text',
   'useActiveTooltipDataPoints',
   'usePlotArea',
   'ZIndexLayer',
   'useChartLayout',
   'useCartesianChartLayout',
+  'useRechartsTheme',
 ] as const;

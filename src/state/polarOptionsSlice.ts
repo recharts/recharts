@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 
 export type PolarChartOptions = {
   cx: number | string;
@@ -36,4 +36,4 @@ const polarOptionsSlice = createSlice<PolarChartState, typeof reducers>({
 
 export const { updatePolarOptions } = polarOptionsSlice.actions;
 
-export const polarOptionsReducer = polarOptionsSlice.reducer;
+export const polarOptionsReducer: Reducer<PolarChartState> = polarOptionsSlice.reducer;

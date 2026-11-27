@@ -1,4 +1,4 @@
+import '../../../www/src/styles/app.css';
 import IndexLineChartComponent from '../../../www/src/views/IndexView/IndexLineChart';
-import { themedStory } from './StoryTheme';
 
-export const IndexLineChart = themedStory(IndexLineChartComponent);
+export const IndexLineChart = IndexLineChartComponent;

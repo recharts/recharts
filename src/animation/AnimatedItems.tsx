@@ -60,6 +60,7 @@ export function useAnimationCallbacks(
  * @returns The interpolated items at time animationElapsedTime
  *
  * @since 3.9
+ * @public
  */
 export type AnimationInterpolateFn<ItemType, LayoutType extends CartesianLayout | PolarLayout> = (
   items: ReadonlyArray<AnimationItem<ItemType>> | null,

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Funnel, FunnelChart, RechartsThemeProvider } from 'recharts';
+import { Funnel, FunnelChart, LabelList, Legend, RechartsThemeProvider, Tooltip } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { value: 100, name: 'first' },
@@ -37,5 +38,28 @@ export function FunnelThemeComparison() {
         <FunnelThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function FunnelFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <FunnelChart style={{ width: '380px', height: '300px' }} margin={{ right: 60 }}>
+          <Funnel
+            dataKey="value"
+            nameKey="name"
+            data={withDataColors(data, fromData)}
+            isAnimationActive={false}
+            {...itemColorProps(fromProps)}
+          >
+            <LabelList position="inside" />
+            <LabelList position="right" dataKey="name" />
+          </Funnel>
+          <Legend />
+          <Tooltip defaultIndex={0} />
+        </FunnelChart>
+      )}
+    />
   );
 }

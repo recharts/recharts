@@ -63,6 +63,10 @@
   }
 
   .props-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
     .props-item {
       border-bottom: 1px solid #f5f5f5;
       padding: 20px 10px;

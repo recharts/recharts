@@ -27,7 +27,9 @@ export default defineConfig({
       '**/.idea/**',
       '**/.cache/**',
       '**/build/**',
-      '**/scripts/**',
+      // Anchored to the root scripts/ folder: those tests need build output and run in the
+      // build-output and treeshaking projects. test/scripts/ holds regular unit tests.
+      'scripts/**',
       '**/.stryker-tmp/**',
       '**/www/docs/**',
     ],
@@ -42,6 +44,12 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:lib',
+          server: {
+            deps: {
+              // The inspector must use the local chart hooks and their context.
+              inline: ['@recharts/devtools', 'recharts'],
+            },
+          },
           isolate: false,
           setupFiles: [
             'test/vitest.setup.ts',
@@ -69,6 +77,9 @@ export default defineConfig({
         },
       },
       {
+        // Since Vitest 5, inline projects extend the root config by default. Opt out so the
+        // root exclude (which ignores scripts/**) does not filter out these tests.
+        extends: false,
         test: {
           name: 'build-output',
           include: ['scripts/**/buildOutput.test.ts', 'scripts/**/verify-exports.test.ts'],
@@ -77,6 +88,7 @@ export default defineConfig({
         },
       },
       {
+        extends: false,
         test: {
           name: 'treeshaking',
           include: ['scripts/treeshaking.test.ts', 'scripts/generate-bundle-data.test.ts'],

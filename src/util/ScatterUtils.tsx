@@ -6,6 +6,9 @@ import { Shape } from './ActiveShapeUtils';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from './Constants';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
+/**
+ * @public
+ */
 export type ScatterShapeProps = ScatterPointItem &
   ShapeAnimationProps & {
     isActive: boolean;

@@ -1,9 +1,10 @@
-import { Label, LineChart, PlotArea, Rectangle, usePlotArea } from 'recharts';
+import { Label, LineChart, PlotArea, Rectangle, usePlotArea, useRechartsTheme } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region helper component
 const PlotAreaRectangle = () => {
   const plotArea: PlotArea | undefined = usePlotArea();
+  const theme = useRechartsTheme();
   if (plotArea == null) {
     return null;
   }
@@ -13,7 +14,7 @@ const PlotAreaRectangle = () => {
       y={plotArea.y}
       width={plotArea.width}
       height={plotArea.height}
-      stroke="#000"
+      stroke={theme?.typography?.color ?? 'black'}
       fill="none"
     />
   );

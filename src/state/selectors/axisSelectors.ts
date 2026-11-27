@@ -47,7 +47,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState, getBrushSliceIndexes } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -87,6 +87,7 @@ import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
+import { getDataKeyOnAxis, isValueAxis } from './effectiveDataKeySelectors';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
 import { applyViewportToRange, AxisViewport, FULL_VIEWPORT, isFullViewport } from '../../util/zoom/viewport';
@@ -462,7 +463,14 @@ export const combineAppliedValues = (
   data: ChartData,
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<GraphicalItemSettings>,
+  layout: LayoutType | undefined,
+  axisType: AllAxisTypes,
 ): AppliedChartData => {
+  if (isValueAxis(layout, axisType) && items.some(item => item.dataKey != null)) {
+    // On the value axis, dataKey of the graphical item wins, and the axis dataKey is the fallback.
+    const dataKeys = new Set(items.map(item => item.dataKey ?? axisSettings?.dataKey));
+    return Array.from(dataKeys).flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
+  }
   if (axisSettings?.dataKey != null) {
     return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
   }
@@ -491,8 +499,10 @@ export const combineAllAppliedValues = (
   { chartData = [], dataStartIndex, dataEndIndex }: ChartDataState,
   anyItemUsesChartData: boolean,
   graphicalItemsData: ChartData,
+  layout: LayoutType | undefined,
+  axisType: AllAxisTypes,
 ): AppliedChartData => {
-  const appliedValues = combineAppliedValues(displayedData, axisSettings, items);
+  const appliedValues = combineAppliedValues(displayedData, axisSettings, items, layout, axisType);
   if (anyItemUsesChartData && axisSettings?.dataKey != null && graphicalItemsData.length > 0) {
     const chartDataSlice = chartData.slice(dataStartIndex, dataEndIndex + 1);
     const chartAppliedValues: AppliedChartData = chartDataSlice
@@ -522,11 +532,13 @@ export const selectAllAppliedValues: (
     selectChartDataWithIndexesIfNotInPanoramaPosition4,
     selectAnyCartesianItemsUsesChartData,
     selectCartesianGraphicalItemsData,
+    selectChartLayout,
+    pickAxisType,
   ],
   combineAllAppliedValues,
 );
 
-function makeNumber(val: unknown): number | undefined {
+export function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
     const n = Number(val);
     if (isWellBehavedNumber(n)) {
@@ -623,10 +635,8 @@ export function getErrorDomainByDataKey(
     return [];
   }
 
-  let appliedNumericValue: number | undefined;
-  if (typeof appliedValue === 'number' && !isNan(appliedValue)) {
-    appliedNumericValue = appliedValue;
-  } else if (Array.isArray(appliedValue)) {
+  let appliedNumericValue = makeNumber(appliedValue);
+  if (appliedNumericValue == null && Array.isArray(appliedValue)) {
     const numericRangeValues = onlyAllowNumbers(appliedValue);
     if (numericRangeValues.length > 0) {
       appliedNumericValue = Math.max(...numericRangeValues);
@@ -647,10 +657,12 @@ export function getErrorDomainByDataKey(
       } else {
         lowBound = highBound = errorValue;
       }
-      if (!isWellBehavedNumber(lowBound) || !isWellBehavedNumber(highBound)) {
+      const low = makeNumber(lowBound);
+      const high = makeNumber(highBound);
+      if (low == null || high == null) {
         return undefined;
       }
-      return [appliedNumericValue - lowBound, appliedNumericValue + highBound];
+      return [appliedNumericValue - low, appliedNumericValue + high];
     }),
   );
 }
@@ -730,11 +742,47 @@ export const selectStackGroups: (
   combineStackGroups,
 );
 
+export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
+
+/**
+ * An ErrorBar on a stacked item is drawn around the end of its stack segment (see `computeBarRectangles`),
+ * so its error range starts from the stacked value, not from the value in the data.
+ */
+function extendDomainToStackedErrorBars(
+  domainOfStackGroups: NumberDomain | undefined,
+  stackGroups: AllStackGroups | undefined,
+  { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
+  errorBars: ErrorBarsState,
+  axisType: AllAxisTypes,
+): NumberDomain | undefined {
+  let [lowerEnd, upperEnd] = domainOfStackGroups ?? [Infinity, -Infinity];
+  Object.values(stackGroups ?? {}).forEach(({ stackedData, graphicalItems }) => {
+    graphicalItems.forEach((item, seriesIndex) => {
+      const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
+        isErrorBarRelevantForAxisType(axisType, errorBar),
+      );
+      if (!relevantErrorBars?.length) {
+        return;
+      }
+      const entries = item.data?.length ? item.data : chartData?.slice(dataStartIndex, dataEndIndex + 1);
+      entries?.forEach((entry, index) => {
+        const stackedValue = stackedData[seriesIndex]?.[index + dataStartIndex];
+        getErrorDomainByDataKey(entry, stackedValue?.[1], relevantErrorBars).forEach(value => {
+          lowerEnd = Math.min(lowerEnd, value);
+          upperEnd = Math.max(upperEnd, value);
+        });
+      });
+    });
+  });
+  return isWellBehavedNumber(lowerEnd) && isWellBehavedNumber(upperEnd) ? [lowerEnd, upperEnd] : undefined;
+}
+
 export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
   chartDataState: ChartDataState,
   axisType: AllAxisTypes,
   domainFromUserPreference: NumberDomain | undefined,
+  errorBars: ErrorBarsState,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
     // User has specified a domain, so we respect that and we can skip computing anything else
@@ -745,7 +793,13 @@ export const combineDomainOfStackGroups = (
     return undefined;
   }
   const [startIndex, endIndex] = getBrushSliceIndexes(chartDataState);
-  return getDomainOfStackGroups(stackGroups, startIndex, endIndex);
+  return extendDomainToStackedErrorBars(
+    getDomainOfStackGroups(stackGroups, startIndex, endIndex),
+    stackGroups,
+    chartDataState,
+    errorBars,
+    axisType,
+  );
 };
 
 const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =
@@ -802,7 +856,13 @@ export const selectDomainOfStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
-  [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
+  [
+    selectStackGroups,
+    selectChartDataWithIndexes,
+    pickAxisType,
+    selectDomainFromUserPreference,
+    selectAllErrorBarSettings,
+  ],
   combineDomainOfStackGroups,
   {
     memoizeOptions: {
@@ -810,8 +870,6 @@ export const selectDomainOfStackGroups: (
     },
   },
 );
-
-export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
 
 const combineRelevantErrorBarSettings = (
   cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
@@ -841,13 +899,20 @@ export const mergeDomains = (
   return [min, max];
 };
 
+/**
+ * Combines numerical values and relevant error bars into an axis domain.
+ * Reads each series' own data when present, otherwise the chart-level slice, without mutating either.
+ * Falls back to displayed data when the axis has a dataKey but no graphical items.
+ * @returns The finite domain bounds, or undefined when no valid domain can be calculated.
+ */
 export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
   displayedData: ChartData,
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<GraphicalItemSettings>,
   errorBars: ErrorBarsState,
   axisType: AllAxisTypes,
-  chartDataSlice: ChartData = [],
+  chartDataSlice: ChartData | undefined,
+  layout: LayoutType | undefined,
 ): NumberDomain | undefined => {
   let lowerEnd: number | undefined, upperEnd: number | undefined;
   if (items.length > 0) {
@@ -859,12 +924,13 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
      * domain that covers all values from all sources.
      */
     items.forEach(item => {
-      const itemData: ChartData = item.data != null ? [...item.data] : chartDataSlice;
+      const itemData: ChartData = item.data ?? chartDataSlice ?? [];
+      const dataKey = getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType);
       const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
         isErrorBarRelevantForAxisType(axisType, errorBar),
       );
       itemData.forEach(entry => {
-        const valueByDataKey = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+        const valueByDataKey = getValueByDataKey(entry, dataKey);
         const errorDomain = getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars);
         if (errorDomain.length >= 2) {
           const localLower = Math.min(...errorDomain);
@@ -914,6 +980,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectAllErrorBarSettings,
     pickAxisType,
     selectChartDataSliceIfNotInPanorama,
+    selectChartLayout,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {
@@ -1103,8 +1170,15 @@ export const combineNumericalDomain = (
     return domainFromUserPreference;
   }
 
+  /*
+   * The stack groups domain only applies to the numeric axis, the one that the stacks grow along.
+   * https://github.com/recharts/recharts/issues/8159
+   */
   const shouldIncludeDomainOfStackGroups =
-    (layout === 'vertical' && axisType === 'xAxis') || (layout === 'horizontal' && axisType === 'yAxis');
+    (layout === 'vertical' && axisType === 'xAxis') ||
+    (layout === 'horizontal' && axisType === 'yAxis') ||
+    (layout === 'radial' && axisType === 'angleAxis') ||
+    (layout === 'centric' && axisType === 'radiusAxis');
 
   const mergedDomains = shouldIncludeDomainOfStackGroups
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
@@ -1227,6 +1301,23 @@ export const combineAxisDomain = (
   return numericalDomain;
 };
 
+// Hidden stacked items count too, so hiding the stacked series does not move the axis.
+export const combineStackOffsetTypeOfAxis = <T extends GraphicalItemSettings>(
+  stackOffsetType: StackOffsetType,
+  graphicalItems: ReadonlyArray<T>,
+  axisPredicate: (item: T) => boolean,
+): StackOffsetType =>
+  graphicalItems.some(item => axisPredicate(item) && isStackedGraphicalItem(item)) ? stackOffsetType : 'none';
+
+const selectStackOffsetTypeOfAxis: (
+  state: RechartsRootState,
+  axisType: AllAxisTypes,
+  axisId: AxisId,
+) => StackOffsetType = createSelector(
+  [selectStackOffsetType, selectUnfilteredCartesianItems, selectAxisPredicate],
+  combineStackOffsetTypeOfAxis,
+);
+
 export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
@@ -1238,7 +1329,7 @@ export const selectAxisDomain: (
     selectChartLayout,
     selectDisplayedData,
     selectAllAppliedValues,
-    selectStackOffsetType,
+    selectStackOffsetTypeOfAxis,
     pickAxisType,
     selectNumericalDomain,
   ],
@@ -1532,6 +1623,9 @@ export const selectXAxisRange: (
   },
 );
 
+/**
+ * @public
+ */
 export type AxisRange = readonly [number, number];
 
 export const selectYAxisRange: (
@@ -2053,10 +2147,9 @@ export const combineAxisTicks = (
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset =
-    axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2
-      ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset
-      : offset;
+  if (axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2) {
+    offset = axisRange[0] > axisRange[1] ? 2 * offset : 0;
+  }
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   const ticksOrNiceTicks = ticks || niceTicks;

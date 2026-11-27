@@ -3,7 +3,7 @@
  * It compares the versions specified in:
  * - package.json (for 'playwright' and '@playwright/test')
  * - test-vr/playwright-ct.Dockerfile
- * - .github/workflows/ci.yml
+ * - .github/workflows/ci.yml (every Playwright image reference)
  *
  * If the versions are all the same, it exits with code 0.
  * If any version is different, it logs the discrepancies and exits with code 1.
@@ -31,6 +31,15 @@ export function getPackageJsonVersion(packageName) {
 
 export const dockerImageRegex = /mcr\.microsoft\.com\/playwright:v([0-9.]+)-jammy/;
 
+/**
+ * Returns the version of every Playwright image reference in the content, in order.
+ * A workflow can reference the image in several jobs, and each of them has to stay in sync.
+ */
+export function getImageVersions(content) {
+  const globalRegex = new RegExp(dockerImageRegex.source, 'g');
+  return Array.from(content.matchAll(globalRegex), match => match[1]);
+}
+
 function getDockerfileVersion() {
   const dockerfilePath = path.join(projectRoot, 'test-vr', 'playwright-ct.Dockerfile');
   const dockerfileContent = fs.readFileSync(dockerfilePath, 'utf8');
@@ -42,15 +51,15 @@ function getDockerfileVersion() {
   return match[1];
 }
 
-function getCiYmlVersion() {
+function getCiYmlVersions() {
   const ciYmlPath = path.join(projectRoot, '.github', 'workflows', 'ci.yml');
   const ciYmlContent = fs.readFileSync(ciYmlPath, 'utf8');
-  const match = ciYmlContent.match(dockerImageRegex);
-  if (!match || !match[1]) {
+  const versions = getImageVersions(ciYmlContent);
+  if (versions.length === 0) {
     console.error('Error: Could not find playwright version in .github/workflows/ci.yml');
     process.exit(1);
   }
-  return match[1];
+  return versions;
 }
 
 export function checkPlaywrightVersions() {
@@ -58,8 +67,10 @@ export function checkPlaywrightVersions() {
     'package.json (playwright)': getPackageJsonVersion('playwright'),
     'package.json (@playwright/test)': getPackageJsonVersion('@playwright/test'),
     'test-vr/playwright-ct.Dockerfile': getDockerfileVersion(),
-    '.github/workflows/ci.yml': getCiYmlVersion(),
   };
+  getCiYmlVersions().forEach((version, index) => {
+    versions[`.github/workflows/ci.yml (image ${index + 1})`] = version;
+  });
 
   const versionValues = Object.values(versions);
   const firstVersion = versionValues[0];

@@ -2,6 +2,7 @@
  * Defines the blank space between the chart and the plot area.
  * This blank space is occupied by supporting elements like axes, legends, and brushes.
  * This also includes any margins that might be applied to the chart.
+ * @public
  */
 export type ChartOffset = {
   /**
@@ -29,6 +30,7 @@ export type ChartOffset = {
 /**
  * Plot area is the area where the actual chart data is rendered.
  * This means: bars, lines, scatter points, etc.
+ * @public
  */
 export type PlotArea = {
   /**

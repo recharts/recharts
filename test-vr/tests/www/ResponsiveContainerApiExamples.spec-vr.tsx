@@ -1,7 +1,7 @@
 import type { ResponsiveContainerExample } from './ResponsiveContainerApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('ResponsiveContainerExample', async ({ mountStory }) => {
+testWithThemes('ResponsiveContainerExample', async ({ mountStory }) => {
   const component = await mountStory<typeof ResponsiveContainerExample>(
     'www/ResponsiveContainerApiExamples/ResponsiveContainerExample',
     {

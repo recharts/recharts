@@ -3,6 +3,7 @@ import {
   Children,
   PureComponent,
   ReactElement,
+  ReactNode,
   SVGAttributes,
   SVGProps,
   TouchEvent,
@@ -10,13 +11,13 @@ import {
   useContext,
   useEffect,
 } from 'react';
-import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber, isNotNil } from '../util/DataUtils';
+import { clsx } from '../util/clsx';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataConsumer, DataKey, Padding } from '../util/types';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
@@ -27,18 +28,23 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
+/**
+ * @public
+ */
 export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
-type BrushStyleProps = Pick<Styles2D, 'fill' | 'stroke'>;
+type BrushStyleProps = Pick<ColorStyles2D, 'fill' | 'stroke'>;
 
 /**
  * The type is exported only so that TypeScript can name it in the declaration files of projects
@@ -50,6 +56,13 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   DataPointType,
   DataValueType
 > {
+  /**
+   * The fill of the brush background: a color, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. The travellers use the plain color.
+   *
+   * @example <Brush fill={{ color: '#fff', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * The x-coordinate of brush.
    * If left undefined, it will be computed from the chart's offset and margins.
@@ -158,13 +171,25 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   alwaysShowText?: boolean;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
+/**
+ * @public
+ */
+export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref' | 'fill'> & BrushProps;
 
-type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
-  RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
+/**
+ * Props after the fill is resolved: `fill` is a color or a `url(#…)`.
+ */
+type StringFillBrushProps = Omit<BrushProps, 'fill'> & { fill?: string };
+
+type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref' | 'fill'> &
+  RequiresDefaultProps<StringFillBrushProps, typeof defaultBrushProps>;
 
 type BrushInternalProps = InternalProps & {
   travellerStyleProps: BrushStyleProps;
+  /**
+   * The definition of the background fill object, if there is one.
+   */
+  fillDefinition?: ReactNode;
 };
 
 type PropertiesFromContext = {
@@ -216,9 +241,33 @@ function getNameFromUnknown(value: unknown): string | undefined {
   return undefined;
 }
 
-function getAriaLabel(data: ReadonlyArray<unknown>, startIndex: number, endIndex: number) {
-  const start = getNameFromUnknown(data[startIndex]);
-  const end = getNameFromUnknown(data[endIndex]);
+function getAriaLabelText(
+  data: ReadonlyArray<unknown>,
+  index: number,
+  dataKey: DataKey<any, string | number> | undefined,
+): string | undefined {
+  const name = getNameFromUnknown(data[index]);
+  if (name != null) {
+    return name;
+  }
+  if (dataKey == null) {
+    return undefined;
+  }
+  const value = getValueByDataKey(data[index], dataKey);
+  return isNotNil(value) ? String(value) : undefined;
+}
+
+function getAriaLabel(
+  data: ReadonlyArray<unknown>,
+  startIndex: number,
+  endIndex: number,
+  dataKey: DataKey<any, string | number> | undefined,
+): string | undefined {
+  const start = getAriaLabelText(data, startIndex, dataKey);
+  const end = getAriaLabelText(data, endIndex, dataKey);
+  if (start == null || end == null) {
+    return undefined;
+  }
   return `Min value: ${start}, Max value: ${end}`;
 }
 
@@ -245,7 +294,18 @@ function TravellerLayer({
   onFocus: () => void;
   onBlur: () => void;
 }) {
-  const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
+  const {
+    y,
+    x: xFromProps,
+    travellerWidth,
+    height,
+    traveller,
+    ariaLabel,
+    data,
+    startIndex,
+    endIndex,
+    dataKey,
+  } = otherProps;
   const { travellerStyleProps } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
@@ -267,7 +327,7 @@ function TravellerLayer({
     customTravellerProps.stroke = travellerStyleProps.stroke;
   }
 
-  const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex);
+  const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex, dataKey);
 
   return (
     <Layer
@@ -897,20 +957,23 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // unless we search for the closest scaleValue to the current coordinate
-    // we need to move travelers via index when using the keyboard
-    let currentIndex: number = -1;
-    if (id === 'startX') {
-      currentIndex = startIndex;
-    } else if (id === 'endX') {
-      currentIndex = endIndex;
-    }
+    // we need to move travelers via index when using the keyboard.
+    // The travellers can be dragged past each other, so the left one holds startIndex whatever its id.
+    const otherX = id === 'startX' ? endX : startX;
+    const isLeftTraveller = id === 'startX' ? startX <= endX : endX < startX;
+    const currentIndex = isLeftTraveller ? startIndex : endIndex;
 
     if (currentIndex < 0 || currentIndex >= data.length) {
       return;
     }
 
-    const newIndex = currentIndex + direction;
-    if (newIndex === -1 || newIndex >= scaleValues.length) {
+    // Step to the next index on the `gap` grid, as dragging does. The last index stays reachable.
+    const steppedIndex = currentIndex + direction;
+    const newIndex = Math.min(
+      (direction > 0 ? Math.ceil(steppedIndex / gap) : Math.floor(steppedIndex / gap)) * gap,
+      data.length - 1,
+    );
+    if (newIndex < 0 || newIndex === currentIndex || newIndex >= scaleValues.length) {
       return;
     }
 
@@ -920,7 +983,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // Prevent travellers from being on top of each other or overlapping
-    if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {
+    if (isLeftTraveller ? newScaleValue >= otherX : newScaleValue <= otherX) {
       return;
     }
 
@@ -955,6 +1018,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       height,
       alwaysShowText,
       fill,
+      fillDefinition,
       stroke,
       startIndex,
       endIndex,
@@ -989,6 +1053,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         onTouchMove={this.handleTouchMove}
         style={style}
       >
+        {fillDefinition != null && <defs>{fillDefinition}</defs>}
         <Background x={x} y={calculatedY} width={width} height={height} fill={fill} stroke={stroke} />
         <PanoramaContextProvider>
           <Panorama x={x} y={calculatedY} width={width} height={height} data={data} padding={padding}>
@@ -1158,18 +1223,28 @@ export const defaultBrushProps = {
  * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
  *
  * @consumes CartesianChartContext
+ * @public
  */
-export function Brush(outsideProps: Props) {
+export function Brush(propsWithFillObject: Props) {
+  // From here on, `fill` is the base color
+  const outsideProps: Omit<Props, 'fill'> & { fill?: string } = {
+    ...propsWithFillObject,
+    fill: splitFill(propsWithFillObject.fill).color,
+  };
   const activeTheme = useRechartsTheme();
   const themeProps = useBackwardsCompatibleTheme<BrushStyleProps>(
-    theme => theme.brush,
+    theme => withFillColor(theme.brush),
     {
       fill: outsideProps.fill,
       stroke: outsideProps.stroke,
     },
     defaultLegacyBrushThemeProps,
   );
-  const props = resolveDefaultProps({ ...outsideProps, ...themeProps }, defaultBrushProps);
+  // Without a fill of its own, the background paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.brush);
+  const background = useFillPaint(propsWithFillObject.fill ?? themeFillObject, themeProps.fill, 'recharts-brush-fill');
+  // the background paints with the definition
+  const props = resolveDefaultProps({ ...outsideProps, ...themeProps, fill: background.paint }, defaultBrushProps);
   const travellerStyleProps: BrushStyleProps =
     activeTheme == null
       ? themeProps
@@ -1186,7 +1261,7 @@ export function Brush(outsideProps: Props) {
         width={props.width}
         padding={props.padding}
       />
-      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} />
+      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} fillDefinition={background.definition} />
     </>
   );
 }

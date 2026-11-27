@@ -79,5 +79,56 @@ describe('getCateCoordinateOfLine', () => {
       });
       expect(actual).toBe(18);
     });
+
+    const categoryAxis = {
+      type: 'category',
+      dataKey: 'name',
+      allowDuplicatedCategory: true,
+      scale: mockScale,
+    } as const;
+
+    describe('when an earlier entry has no category', () => {
+      const ticks = [
+        { coordinate: 8, index: 0, value: 'A' },
+        { coordinate: 16, index: 1, value: 'C' },
+      ];
+
+      it('should return the tick of the entry category, not the tick at the entry index', () => {
+        const actual = getCateCoordinateOfLine({
+          axis: categoryAxis,
+          bandSize: 4,
+          entry: { name: 'C' },
+          index: 2,
+          ticks,
+        });
+        expect(actual).toBe(18);
+      });
+
+      it('should return null for the entry without a category', () => {
+        const entryWithoutCategory: { name?: string; value: number } = { value: 20 };
+        const actual = getCateCoordinateOfLine({
+          axis: categoryAxis,
+          bandSize: 4,
+          entry: entryWithoutCategory,
+          index: 1,
+          ticks,
+        });
+        expect(actual).toBeNull();
+      });
+    });
+
+    it('should return the tick at the entry index when categories repeat', () => {
+      const actual = getCateCoordinateOfLine({
+        axis: categoryAxis,
+        bandSize: 4,
+        entry: { name: 'A' },
+        index: 1,
+        ticks: [
+          { coordinate: 8, index: 0, value: 'A' },
+          { coordinate: 16, index: 1, value: 'A' },
+        ],
+      });
+      expect(actual).toBe(18);
+    });
   });
 });

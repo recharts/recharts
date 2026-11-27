@@ -1,4 +1,15 @@
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, TooltipIndex } from 'recharts';
+import {
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  ZAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  TooltipIndex,
+  autoPalette,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -38,8 +49,8 @@ const ThreeDimScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex })
       <ZAxis type="number" dataKey="z" range={[60, 400]} name="score" unit="km" />
       <Tooltip defaultIndex={defaultIndex} />
       <Legend />
-      <Scatter name="A school" data={data01} dataKey="x" shape="star" />
-      <Scatter name="B school" data={data02} dataKey="y" shape="triangle" />
+      <Scatter name="A school" data={data01} fill={autoPalette[0]} shape="star" />
+      <Scatter name="B school" data={data02} fill={autoPalette[1]} shape="triangle" />
       <RechartsDevtools />
     </ScatterChart>
   );

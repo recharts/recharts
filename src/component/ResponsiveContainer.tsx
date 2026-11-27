@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import * as React from 'react';
 import {
   createContext,
@@ -14,6 +13,7 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
+import { clsx } from '../util/clsx';
 import { isNumber, noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import {
@@ -24,7 +24,11 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { getContentBoxSize } from '../util/getContentBoxSize';
 
+/**
+ * @public
+ */
 export interface Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'id' | 'className' | 'style' | 'onResize'> {
   /**
    * width / height. If specified, the height will be calculated by width / aspect.
@@ -189,7 +193,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
       }
       const observer = new ResizeObserver(callback);
 
-      const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
+      const { width: containerWidth, height: containerHeight } = getContentBoxSize(containerRef.current);
       setContainerSize(containerWidth, containerHeight);
 
       observer.observe(containerRef.current);
@@ -253,9 +257,13 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * This component uses the {@link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver ResizeObserver} API to monitor changes to the size of its parent element.
  * If you need to support older browsers that do not support this API, you may need to include a polyfill.
  *
+ * The parent element must have a size of its own: the container measures itself and passes that size to the chart,
+ * so a parent whose height comes from its content leaves the chart with nothing to measure.
+ *
  * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart size guide}
  *
  * @provides ResponsiveContainerContext
+ * @public
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const responsiveContainerContext = useResponsiveContainerContext();

@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { ReactElement, SVGProps, useEffect } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { IfOverflow, Overflowable } from '../util/IfOverflow';
@@ -24,7 +24,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
@@ -38,6 +38,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
  * and you want the line to end at 50, you would provide `50` here.
  *
  * @inline
+ * @public
  */
 export type ReferenceLineSegment = readonly [
   {
@@ -118,12 +119,14 @@ interface ReferenceLineProps<
    *
    * - `false`: no labels are rendered
    * - `string` | `number`: the content of the label
-   * - `object`: the props of LabelList component
+   * - `object`: the props of a single Label component, such as `value` and `position`
    * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
    *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label
    *
    * @defaultValue false
+   *
+   * @example <ReferenceLine y={20} label={{ value: 'Target', position: 'insideTop' }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
    */
@@ -150,6 +153,7 @@ interface ReferenceLineProps<
  * 1. The components wants viewBox of object type, and svg wants string
  *    - so there's a conflict, and the component will throw if it gets string
  * 2. Internally the component calls `svgPropertiesNoEvents` which filters the viewBox away anyway
+ * @public
  */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
@@ -271,6 +275,12 @@ export const getEndPoints = (
     return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, xAxisScale, viewBox);
   }
   if (segment != null && segment.length === 2) {
+    // don't render the segment if the scale can't compute a result that makes sense
+    const isOffAxis = (value: number | string | undefined, scale: RechartsScale): boolean =>
+      value != null && !isWellBehavedNumber(scale.map(value, { position }));
+    if (segment.some(end => isOffAxis(end.x, xAxisScale) || isOffAxis(end.y, yAxisScale))) {
+      return null;
+    }
     return getSegmentLineEndPoints(
       segment,
       ifOverflow,
@@ -365,7 +375,7 @@ export const referenceLineDefaultProps = {
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceLineThemeProps: Styles2D = {
+const defaultLegacyReferenceLineThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
   fillOpacity: 1,
@@ -387,13 +397,14 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceLine<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceLineThemeProps,
   );

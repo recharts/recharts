@@ -15,4 +15,5 @@ export const expectedInBundle = [
   'useChartLayout',
   'usePolarChartLayout',
   'ZIndexLayer',
+  'useRechartsTheme',
 ] as const;

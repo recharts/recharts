@@ -42,6 +42,49 @@ describe('<Text />', () => {
     expect(text.children).toHaveLength(1);
   });
 
+  test.each([
+    ['emoji', '😀😃', ['😀', '😃']],
+    ['Japanese hiragana', 'あいう', ['あ', 'い', 'う']],
+    ['Japanese katakana', 'アイウ', ['ア', 'イ', 'ウ']],
+    ['Chinese Han characters', '中文汉', ['中', '文', '汉']],
+    ['supplementary Han characters', '𠮷𠀀', ['𠮷', '𠀀']],
+    ['mixed kana, Han and emoji', 'あ中😀', ['あ', '中', '😀']],
+  ])('wraps %s on code-point boundaries with breakAll', (_, value, expected) => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={25} breakAll>
+          {value}
+        </Text>
+      </Surface>,
+    );
+
+    const lines = Array.from(container.querySelectorAll('text > tspan'), line => line.textContent);
+    expect(lines).toEqual(expected);
+  });
+
+  test.each([
+    ['emoji', '😀😃😄', '😀…'],
+    ['supplementary Han', '𠮷𠀀𠮷', '𠮷…'],
+    ['mixed kana and emoji', 'あ😀い', 'あ…'],
+  ])('keeps %s intact when breakAll is truncated by maxLines', (_, value, expected) => {
+    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation(text => ({
+      width: Array.from(String(text)).reduce((sum, character) => {
+        const isNarrow = character === '…' || /^[\uD800-\uDFFF]$/.test(character);
+        return sum + (isNarrow ? 10 : 25);
+      }, 0),
+      height: 17,
+    }));
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={50} maxLines={1} breakAll>
+          {value}
+        </Text>
+      </Surface>,
+    );
+    const lines = Array.from(container.querySelectorAll('text > tspan'), line => line.textContent);
+    expect(lines).toEqual([expected]);
+  });
+
   test('renders number children', () => {
     const { container } = render(
       <Surface width={300} height={300}>
@@ -425,6 +468,22 @@ describe('<Text />', () => {
   });
 
   describe('maxLines', () => {
+    test.each([
+      { children: null, breakAll: false },
+      { children: undefined, breakAll: false },
+      { children: '', breakAll: true },
+    ])('renders nothing for $children with breakAll=$breakAll', ({ children, breakAll }) => {
+      const { container } = render(
+        <Surface width={300} height={200}>
+          <Text width={300} maxLines={1} breakAll={breakAll}>
+            {children}
+          </Text>
+        </Surface>,
+      );
+
+      expect(container.querySelector('text')).not.toBeInTheDocument();
+    });
+
     test('does not do anything when maxLines are not exceeded', () => {
       render(
         <Surface width={300} height={200}>

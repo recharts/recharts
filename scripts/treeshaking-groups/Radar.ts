@@ -11,9 +11,11 @@ export const expectedInBundle = [
   'matchByIndex',
   'Polygon',
   'Radar',
+  'Symbols',
   'Text',
   'useActiveTooltipDataPoints',
   'useChartLayout',
   'usePolarChartLayout',
   'ZIndexLayer',
+  'useRechartsTheme',
 ] as const;

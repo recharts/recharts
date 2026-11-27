@@ -11,6 +11,7 @@ import {
   RechartsThemeProvider,
   Tooltip,
   XAxis,
+  YAxis,
 } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
@@ -212,6 +213,37 @@ describe('<Line />', () => {
       },
     ]);
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  describe('null values in vertical layout', () => {
+    const nullData = [
+      { name: 'Page A', uv: 400 },
+      { name: 'Page B', uv: 300 },
+      { name: 'Page C', uv: null },
+      { name: 'Page D', uv: 278 },
+      { name: 'Page E', uv: 189 },
+    ];
+
+    function renderVerticalLine(connectNulls: boolean): string {
+      const { container } = render(
+        <LineChart width={400} height={400} data={nullData} layout="vertical">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Line dataKey="uv" connectNulls={connectNulls} isAnimationActive={false} />
+        </LineChart>,
+      );
+      const path = container.querySelector('.recharts-line-curve')?.getAttribute('d');
+      assertNotNull(path);
+      return path;
+    }
+
+    it('should break the line at a null value when connectNulls is false', () => {
+      expect(renderVerticalLine(false).match(/M/g)).toHaveLength(2);
+    });
+
+    it('should connect the line across a null value when connectNulls is true', () => {
+      expect(renderVerticalLine(true).match(/M/g)).toHaveLength(1);
+    });
   });
 
   describe('activeDot', () => {

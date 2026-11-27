@@ -9,6 +9,13 @@ Read ./DEVELOPING.md for instructions how to develop this project.
 
 Read ./CONTRIBUTING.md for guidelines on contributing to this project.
 
+Install dependencies with `npm ci` from the repository root only. Never run `npm ci` or `npm install`
+inside `www`: it is an npm workspace, and installing from there prunes the root `node_modules`.
+
+The website in `www` consumes the built library. On a fresh checkout or worktree, run `npm run build`
+once before running website tests or type checks (`npm run test-website`, `npm run check-types-website`),
+otherwise they fail with unrelated errors.
+
 When running unit tests, prefer to run a single test file:
 
 ```shell
@@ -31,17 +38,14 @@ Do not focus too much on fitting the existing style, if it is not ideal.
 ## Visual regression tests
 
 Read `test-vr/README.md` and `.agents/skills/vr-test/SKILL.md` before adding or
-changing Playwright visual-regression tests. New specs use `testWithThemes`
+changing Playwright visual-regression tests. Specs use `testWithThemes`
 from `test-vr/tests/fixtures`, which automatically renders legacy, light, and
 dark Recharts theme variants. Do not expose theme selection through story
 props, theme-specific test titles, or custom screenshot names.
 
-Existing specs may continue to use the legacy `test` fixture while they are
-migrated one spec at a time. When asked to migrate one, follow
-`.agents/skills/vr-test-migration/SKILL.md`; do not create a central exclusion
-list. Keep `prefers-color-scheme` (`colorScheme`) separate from Recharts theme
+Keep `prefers-color-scheme` (`colorScheme`) separate from Recharts theme
 selection, and use the documented fixture options or `@recharts-theme-*` tags
-for intentional exceptions.
+for intentional exceptions; do not create a central exclusion list.
 
 Run visual-regression tests and update screenshots through Docker only. Do not
 commit generated `test-results` or `playwright-report` output.

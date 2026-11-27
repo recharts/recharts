@@ -60,67 +60,45 @@ function getAllowedRechartsThemes(
   return taggedThemes.length > 0 ? taggedThemes : rechartsThemes;
 }
 
-function createTest(defaultThemes: readonly RechartsThemeVariant[], useContrastBackground = false) {
-  return base.extend<TestOptions & TestFixtures>({
-    rechartsThemes: [defaultThemes, { option: true }],
-
-    rechartsTheme: async ({ rechartsThemes: _rechartsThemes }, use, testInfo) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
-      await use(getProjectRechartsTheme(testInfo));
-    },
-
-    mountStory: async ({ mount, rechartsTheme, rechartsThemes }, use, testInfo) => {
-      const allowedThemes = getAllowedRechartsThemes(rechartsThemes, testInfo);
-      if (!allowedThemes.includes(rechartsTheme)) {
-        testInfo.skip(true, `Recharts theme "${rechartsTheme}" is not enabled for this test`);
-      }
-
-      let removeContrastBackground: (() => Promise<void>) | undefined;
-      const mountStory: MountStory = async (storyId, props) => {
-        const root = await mount(storyId, props);
-        if (useContrastBackground && removeContrastBackground === undefined) {
-          const backgroundClassName =
-            rechartsTheme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light;
-          await root.evaluate((element, className: string) => element.classList.add(className), backgroundClassName);
-          removeContrastBackground = async () => {
-            await root.evaluate(
-              (element, className: string) => element.classList.remove(className),
-              backgroundClassName,
-            );
-          };
-        }
-        const children = root.locator(':scope > *');
-        const component: Locator = (await children.count()) === 1 ? children.first() : root;
-
-        return Object.assign(component, {
-          update: root.update,
-          unmount: root.unmount,
-        });
-      };
-
-      try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
-        await use(mountStory);
-      } finally {
-        await removeContrastBackground?.();
-      }
-    },
-  });
-}
-
 /*
- * Existing specs use this fixture and therefore keep their legacy-only
- * snapshot set while they are migrated. `legacyTest` is the explicit name for
- * new specs that intentionally need the compatibility behavior.
+ * Each test runs once for each browser/theme project, and the fixture
+ * automatically supplies the selected theme to the gallery boundary.
  */
-export const legacyTest = createTest(['legacy']);
-export const test = legacyTest;
+export const testWithThemes = base.extend<TestOptions & TestFixtures>({
+  rechartsThemes: [allRechartsThemes, { option: true }],
 
-/*
- * New specs should use this fixture. It creates one test execution for each
- * browser/theme project and automatically supplies the selected theme to the
- * gallery boundary.
- */
-export const testWithThemes = createTest(allRechartsThemes, true);
+  rechartsTheme: async ({ rechartsThemes: _rechartsThemes }, use, testInfo) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
+    await use(getProjectRechartsTheme(testInfo));
+  },
+
+  mountStory: async ({ mount, rechartsTheme, rechartsThemes }, use, testInfo) => {
+    const allowedThemes = getAllowedRechartsThemes(rechartsThemes, testInfo);
+    if (!allowedThemes.includes(rechartsTheme)) {
+      testInfo.skip(true, `Recharts theme "${rechartsTheme}" is not enabled for this test`);
+    }
+
+    const mountStory: MountStory = async (storyId, props) => {
+      const root = await mount(storyId, props);
+      /*
+       * Every mount resets the canvas classes (see setCanvasBackground in the gallery renderer),
+       * so add the class after each mount. No cleanup is needed: the next mount resets it again.
+       */
+      const backgroundClassName =
+        rechartsTheme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light;
+      await root.evaluate((element, className: string) => element.classList.add(className), backgroundClassName);
+      const children = root.locator(':scope > *');
+      const component: Locator = (await children.count()) === 1 ? children.first() : root;
+
+      return Object.assign(component, {
+        update: root.update,
+        unmount: root.unmount,
+      });
+    };
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
+    await use(mountStory);
+  },
+});
 
 export { expect };

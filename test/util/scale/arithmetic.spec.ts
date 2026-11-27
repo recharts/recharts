@@ -54,5 +54,22 @@ describe('arithmetic', () => {
         0, 0.00000035, 0.0000007, 0.00000105, 0.0000014, 0.00000175, 0.0000021, 0.00000245, 0.0000028, 0.00000315,
       ]);
     });
+
+    it('should not loop when the step is zero', () => {
+      const result = rangeStep(new Decimal(0), new Decimal(5), new Decimal(0));
+      expect(result).toEqual([0]);
+    });
+
+    it('should not loop when the step is negative', () => {
+      const result = rangeStep(new Decimal(0), new Decimal(5), new Decimal(-1));
+      expect(result).toEqual([0]);
+    });
+
+    it('should not loop when the step is too small to advance at Decimal precision', () => {
+      // At Decimal's default 20 significant digits, 1e15 + 1e-7 rounds back to
+      // 1e15, so num.add(step) never grows and num.lt(end) stays true forever.
+      const result = rangeStep(new Decimal('1e15'), new Decimal('1000000000000000.000001'), new Decimal('1e-7'));
+      expect(result).toEqual([1e15]);
+    });
   });
 });
