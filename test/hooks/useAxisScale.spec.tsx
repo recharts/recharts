@@ -7,6 +7,8 @@ import {
   useYAxisScale,
   useXAxisInverseScale,
   useYAxisInverseScale,
+  useXAxisInverseDataSnapScale,
+  useYAxisInverseDataSnapScale,
   useCartesianScale,
 } from '../../src/hooks';
 import { PageData } from '../_data';
@@ -164,6 +166,75 @@ describe('axis scale hooks', () => {
         const inverseFunction = spy.mock.calls.at(-1)?.[0];
         expect(inverseFunction).toBeDefined();
         expect(typeof inverseFunction).toBe('function');
+      });
+    });
+  });
+
+  describe('useXAxisInverseDataSnapScale', () => {
+    describe('with a categorical axis whose categories are not in ascending order', () => {
+      const data = [
+        { year: 2024, value: 1 },
+        { year: 2022, value: 2 },
+        { year: 2023, value: 3 },
+        { year: 2021, value: 4 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={500} height={300} data={data}>
+          <Line dataKey="value" isAnimationActive={false} />
+          <XAxis dataKey="year" />
+          {children}
+        </LineChart>
+      ));
+
+      function useScaleAndDataSnap() {
+        return { scale: useXAxisScale(), inverse: useXAxisInverseDataSnapScale() };
+      }
+
+      it('should snap each category position back to that category', () => {
+        const { spy } = renderTestCase(useScaleAndDataSnap);
+        const { scale, inverse } = spy.mock.calls.at(-1)?.[0] ?? {};
+        expect(scale).toBeDefined();
+        expect(inverse).toBeDefined();
+        data.forEach(({ year }) => {
+          const pixel = scale?.(year);
+          expect(pixel).toEqual(expect.any(Number));
+          expect(inverse?.(pixel ?? NaN)).toBe(year);
+        });
+      });
+    });
+  });
+
+  describe('useYAxisInverseDataSnapScale', () => {
+    describe('with null values in the data', () => {
+      const data = [
+        { name: 'a', value: 10 },
+        { name: 'b', value: null },
+        { name: 'c', value: 20 },
+        { name: 'd', value: 30 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={500} height={300} data={data}>
+          <Line dataKey="value" isAnimationActive={false} />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {children}
+        </LineChart>
+      ));
+
+      function useScaleAndDataSnap() {
+        return { scale: useYAxisScale(), inverse: useYAxisInverseDataSnapScale() };
+      }
+
+      it('should snap to the closest data point and never to the null value', () => {
+        const { spy } = renderTestCase(useScaleAndDataSnap);
+        const { scale, inverse } = spy.mock.calls.at(-1)?.[0] ?? {};
+        expect(scale).toBeDefined();
+        expect(inverse).toBeDefined();
+        const snapAt = (value: number) => inverse?.(scale?.(value) ?? NaN);
+        expect(snapAt(0)).toBe(10);
+        expect(snapAt(10)).toBe(10);
+        expect(snapAt(20)).toBe(20);
+        expect(snapAt(30)).toBe(30);
       });
     });
   });

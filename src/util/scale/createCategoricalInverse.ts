@@ -1,5 +1,6 @@
 import { InverseScaleFunction } from '../../hooks';
 import { CustomScaleDefinition } from './CustomScaleDefinition';
+import { isWellBehavedNumber } from '../isWellBehavedNumber';
 
 /**
  * Binary search to find the index where x would fit in array a.
@@ -39,14 +40,27 @@ export function createCategoricalInverse(
     return undefined;
   }
   const domain = allDataPointsOnAxis ?? scale.domain();
-  // Build an array of pixel positions for each domain value
-  // @ts-expect-error we're attempting to scale unknown without having guarantee that it is a Domain type
-  const pixelPositions: number[] = domain.map(d => scale(d) ?? 0);
   const range = scale.range();
 
   if (domain.length === 0 || range.length < 2) {
     return undefined;
   }
+
+  /*
+   * Bisect needs the values in the order of their pixel positions, so sort by pixel and not by value:
+   * a categorical axis keeps its categories in the order of its domain, which is not necessarily ascending.
+   * Values that the scale cannot place, like the `null` of a gap in a Line, have no position and are skipped.
+   */
+  const placedValues: Array<{ value: unknown; pixel: number }> = [];
+  domain.forEach(value => {
+    // @ts-expect-error we're attempting to scale unknown without having guarantee that it is a Domain type
+    const pixel = scale(value);
+    if (isWellBehavedNumber(pixel)) {
+      placedValues.push({ value, pixel });
+    }
+  });
+  placedValues.sort((a, b) => a.pixel - b.pixel);
+  const pixelPositions = placedValues.map(({ pixel }) => pixel);
 
   return (pixelValue: number): unknown => {
     // Find the closest domain value using bisect
@@ -54,18 +68,21 @@ export function createCategoricalInverse(
 
     // Clamp to valid range
     if (index <= 0) {
-      return domain[0];
+      return placedValues[0]?.value;
     }
-    if (index >= domain.length) {
-      return domain[domain.length - 1];
+    if (index >= placedValues.length) {
+      return placedValues[placedValues.length - 1]?.value;
     }
 
     // Check which neighbor is closer
-    const leftPixel = pixelPositions[index - 1] ?? 0;
-    const rightPixel = pixelPositions[index] ?? 0;
-    if (Math.abs(pixelValue - leftPixel) <= Math.abs(pixelValue - rightPixel)) {
-      return domain[index - 1];
+    const left = placedValues[index - 1];
+    const right = placedValues[index];
+    if (left == null || right == null) {
+      return undefined;
     }
-    return domain[index];
+    if (Math.abs(pixelValue - left.pixel) <= Math.abs(pixelValue - right.pixel)) {
+      return left.value;
+    }
+    return right.value;
   };
 }
