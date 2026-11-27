@@ -42,7 +42,7 @@ describe('AllZIndexPortals', () => {
     // each portal should have tabIndex=-1 (out of Tab order) and outline: none (no pointer focus ring)
     initialPortals.forEach(portal => {
       expect(portal).toHaveAttribute('tabindex', '-1');
-      expect(portal).toHaveStyle({ outline: 'none' });
+      expect(portal).toHaveStyle({ outlineStyle: 'none' });
     });
 
     act(() => {

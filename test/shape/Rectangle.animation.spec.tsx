@@ -317,7 +317,7 @@ describe('Rectangle animation', () => {
           const { container, animationManager } = renderTestCase();
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
             'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms ease;',
+            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms;',
           ]);
         });
       });
@@ -356,7 +356,7 @@ describe('Rectangle animation', () => {
           await prime(container);
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
             'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms ease;',
+            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms;',
           ]);
         });
       });

@@ -304,7 +304,8 @@ describe('<Text background />', () => {
     expect(path).toHaveAttribute('d', 'M0,0 L100,100');
     expect(path).toHaveAttribute('fill', 'none');
     expect(path).toHaveAttribute('stroke', '#fff');
-    expect(path).toHaveAttribute('stroke-width', '18');
+    // The stroke width is the computed font size (16px browser default) plus vertical padding on both sides.
+    expect(path).toHaveAttribute('stroke-width', '20');
     expect(path).toHaveAttribute('stroke-linecap', 'round');
     expect(path).toHaveAttribute('stroke-dasharray', '48px 200px');
     expect(path).toHaveAttribute('stroke-dashoffset', '-46px');
@@ -336,13 +337,13 @@ describe('<Text background />', () => {
     assertNotNull(outline);
     expect(outline).toHaveAttribute('stroke', '#000');
     expect(outline).toHaveAttribute('stroke-opacity', '0.5');
-    expect(outline).toHaveAttribute('stroke-width', '22');
+    expect(outline).toHaveAttribute('stroke-width', '24');
 
     const background = container.querySelector('path.recharts-text-path-background');
     assertNotNull(background);
     expect(background).toHaveAttribute('stroke', '#fff');
     expect(background).toHaveAttribute('stroke-opacity', '0.75');
-    expect(background).toHaveAttribute('stroke-width', '18');
+    expect(background).toHaveAttribute('stroke-width', '20');
   });
 
   it('resizes the rectangle when the text changes', () => {
