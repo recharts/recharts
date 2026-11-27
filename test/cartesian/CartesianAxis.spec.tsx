@@ -88,7 +88,13 @@ describe('<CartesianAxis />', () => {
   });
 
   it('gets font states from its ComputedStyle', () => {
-    const myStyle = { fontSize: '14px', letterSpacing: '0.5em' } as CSSStyleDeclaration;
+    const myStyle = {
+      fontSize: '14px',
+      letterSpacing: '0.5em',
+      fontFamily: '"Roboto Mono", monospace',
+      fontWeight: '700',
+      fontStyle: 'italic',
+    } as CSSStyleDeclaration;
 
     vi.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
 
