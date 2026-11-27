@@ -85,6 +85,27 @@ describe('DOMUtils', () => {
     expect(getStringCacheStats().size).toBe(2);
   });
 
+  test('getStringSize() measures in the given font family, weight and style', () => {
+    getStringSize('test', { fontFamily: 'monospace', fontWeight: '700', fontStyle: 'italic' });
+
+    const span = document.getElementById('recharts_measurement_span');
+    expect(span?.style.fontFamily).toBe('monospace');
+    expect(span?.style.fontWeight).toBe('700');
+    expect(span?.style.fontStyle).toBe('italic');
+  });
+
+  test('getStringSize() does not keep the styles of the previous measurement', () => {
+    getStringSize('first', { fontFamily: 'monospace', fontWeight: '700', fontStyle: 'italic', fontSize: '20px' });
+    getStringSize('second', { fontFamily: undefined, fontSize: '14px' });
+
+    const span = document.getElementById('recharts_measurement_span');
+    expect(span?.style.fontFamily).toBe('');
+    expect(span?.style.fontWeight).toBe('');
+    expect(span?.style.fontStyle).toBe('');
+    expect(span?.style.fontSize).toBe('14px');
+    expect(span?.style.position).toBe('absolute');
+  });
+
   test('configureTextMeasurement should update configuration', () => {
     const newConfig = {
       cacheSize: 1000,
