@@ -32,6 +32,7 @@ export const apiCates = [
       'Text',
       'Label',
       'LabelList',
+      'Title',
       'Layer',
       'Customized',
       'ZIndexLayer',

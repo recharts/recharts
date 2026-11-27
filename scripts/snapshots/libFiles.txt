@@ -69,6 +69,7 @@
   "lib/component/Legend.js",
   "lib/component/ResponsiveContainer.js",
   "lib/component/Text.js",
+  "lib/component/Title.js",
   "lib/component/Tooltip.js",
   "lib/component/TooltipBoundingBox.js",
   "lib/component/responsiveContainerUtils.js",

@@ -69,6 +69,7 @@
   "es6/component/Legend.js",
   "es6/component/ResponsiveContainer.js",
   "es6/component/Text.js",
+  "es6/component/Title.js",
   "es6/component/Tooltip.js",
   "es6/component/TooltipBoundingBox.js",
   "es6/component/responsiveContainerUtils.js",
