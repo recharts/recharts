@@ -89,7 +89,15 @@ function RevealClipRect({ alpha, layout, points, baseLine, strokeWidth }: ClipRe
 /**
  * @public
  */
-export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?: LayoutType; isRange?: boolean };
+export type AreaRevealShapeProps = CurveProps &
+  ShapeAnimationProps & {
+    layout?: LayoutType;
+    isRange?: boolean;
+    /**
+     * Points of the stroke when it should cover fewer points than the fill, defaults to `points`.
+     */
+    strokePoints?: CurveProps['points'];
+  };
 
 /**
  * The default shape for Area that reveals the chart with a left-to-right (or top-to-bottom)
@@ -124,6 +132,7 @@ export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement
     isRange,
     stroke,
     connectNulls,
+    strokePoints,
     ...restProps
   } = props;
   const layout: CartesianLayout = layoutProp === 'vertical' ? 'vertical' : 'horizontal';
@@ -154,7 +163,7 @@ export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement
       connectNulls={finalConnectNulls}
       fill="none"
       stroke={stroke}
-      points={restProps.points}
+      points={strokePoints ?? restProps.points}
     />
   );
 

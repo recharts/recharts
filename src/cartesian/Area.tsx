@@ -677,6 +677,27 @@ function AreaLabelListProvider({
   );
 }
 
+/**
+ * A stacked series with connectNulls fills its nulls as zero contribution so the stack has no gaps,
+ * but its stroke has nothing to connect before its first or after its last value.
+ */
+function trimPointsWithoutValue(
+  points: ReadonlyArray<AreaPointItem>,
+  dataKey: DataKey<unknown> | undefined,
+): ReadonlyArray<AreaPointItem> {
+  const hasNoValue = (point: AreaPointItem | undefined) =>
+    point?.payload != null && getValueByDataKey(point.payload, dataKey) == null;
+  let start = 0;
+  while (start < points.length && hasNoValue(points[start])) {
+    start++;
+  }
+  let end = points.length;
+  while (end > start && hasNoValue(points[end - 1])) {
+    end--;
+  }
+  return start === 0 && end === points.length ? points : points.slice(start, end);
+}
+
 function StaticArea({
   points,
   baseLine,
@@ -701,11 +722,14 @@ function StaticArea({
   const { id, ...propsWithoutId } = props;
   const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
 
+  const strokePoints = useMemo(() => trimPointsWithoutValue(points, props.dataKey), [points, props.dataKey]);
+
   const curveProps: AreaRevealShapeProps = {
     ...propsWithEvents,
     fill: props.fillObject == null ? propsWithEvents.fill : getFillUrl(getSeriesFillId(id)),
     id,
     points,
+    strokePoints,
     connectNulls,
     type,
     baseLine,

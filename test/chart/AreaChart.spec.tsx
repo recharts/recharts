@@ -846,6 +846,63 @@ describe('AreaChart', () => {
     });
   });
 
+  test('does not extend a stacked series to its leading and trailing nulls if connectNulls is true', () => {
+    const dataWithEdgeNulls = [
+      { name: 'A', lower: 10 },
+      { name: 'B', lower: 10, upper: 8 },
+      { name: 'C', lower: 10 },
+      { name: 'D', lower: 10, upper: 6 },
+      { name: 'E', lower: 10 },
+    ];
+    const { container } = render(
+      <AreaChart width={100} height={50} data={dataWithEdgeNulls}>
+        <Area stackId="1" connectNulls type="linear" dataKey="lower" isAnimationActive={false} />
+        <Area stackId="1" connectNulls type="linear" dataKey="upper" isAnimationActive={false} />
+      </AreaChart>,
+    );
+
+    const [lower, upper] = container.querySelectorAll('.recharts-area-curve');
+    assertNotNull(lower);
+    assertNotNull(upper);
+    // The lower series has data at A and E, so its stroke spans the whole chart.
+    expect(lower.getAttribute('d')).toBe('M5,25L27.5,25L50,25L72.5,25L95,25');
+    // The upper series has no data at A and E. Its stroke starts at B and ends at D instead of
+    // running over the lower series' stroke. C is still drawn as zero contribution.
+    expect(upper.getAttribute('d')).toBe('M27.5,9L50,25L72.5,13');
+  });
+
+  test('keeps filling a stacked series at its leading and trailing nulls if connectNulls is true', () => {
+    const dataWithEdgeNulls = [
+      { name: 'A', lower: 10, top: 4 },
+      { name: 'B', lower: 10, middle: 8, top: 4 },
+      { name: 'C', lower: 10, top: 4 },
+      { name: 'D', lower: 10, middle: 6, top: 4 },
+      { name: 'E', lower: 10, top: 4 },
+    ];
+    const { container } = render(
+      <AreaChart width={100} height={50} data={dataWithEdgeNulls}>
+        <Area stackId="1" connectNulls type="linear" dataKey="lower" isAnimationActive={false} />
+        <Area stackId="1" connectNulls type="linear" dataKey="middle" isAnimationActive={false} />
+        <Area stackId="1" connectNulls type="linear" dataKey="top" isAnimationActive={false} />
+      </AreaChart>,
+    );
+
+    const strokes = Array.from(container.querySelectorAll('.recharts-area-curve')).map(el => el.getAttribute('d'));
+    const fills = Array.from(container.querySelectorAll('.recharts-area-area')).map(el => el.getAttribute('d'));
+    // The middle stroke covers only B to D, so it does not run over the lower stroke at A and E.
+    expect(strokes).toEqual([
+      'M5,28.333L27.5,28.333L50,28.333L72.5,28.333L95,28.333',
+      'M27.5,15L50,28.333L72.5,18.333',
+      'M5,21.667L27.5,8.333L50,21.667L72.5,11.667L95,21.667',
+    ]);
+    // The middle fill still spans A to E as zero contribution, so its top edge is the bottom edge of the top fill.
+    expect(fills).toEqual([
+      'M5,28.333L27.5,28.333L50,28.333L72.5,28.333L95,28.333L95,45L72.5,45L50,45L27.5,45L5,45Z',
+      'M5,28.333L27.5,15L50,28.333L72.5,18.333L95,28.333L95,28.333L72.5,28.333L50,28.333L27.5,28.333L5,28.333Z',
+      'M5,21.667L27.5,8.333L50,21.667L72.5,11.667L95,21.667L95,28.333L72.5,18.333L50,28.333L27.5,15L5,28.333Z',
+    ]);
+  });
+
   test('breaks at points where every stacked series is null if connectNulls is false', () => {
     const dataWithAllNullPageB = [
       { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
