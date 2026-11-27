@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { Padding } from '../util/types';
 
 /**
@@ -36,4 +36,4 @@ export const brushSlice = createSlice({
 
 export const { setBrushSettings } = brushSlice.actions;
 
-export const brushReducer = brushSlice.reducer;
+export const brushReducer: Reducer<BrushSettings> = brushSlice.reducer;

@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { LayoutType, Size } from '../util/types';
 import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
@@ -103,4 +103,4 @@ const legendSlice = createSlice({
 export const { setLegendSize, setLegendSettings, addLegendPayload, replaceLegendPayload, removeLegendPayload } =
   legendSlice.actions;
 
-export const legendReducer = legendSlice.reducer;
+export const legendReducer: Reducer<LegendState> = legendSlice.reducer;

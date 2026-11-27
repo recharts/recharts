@@ -609,6 +609,35 @@ describe('<Label />', () => {
     expect(screen.getByText(/400/i)).toBeInTheDocument();
   });
 
+  describe('label prop as a number', () => {
+    const getLabelTexts = (container: Element) =>
+      Array.from(container.querySelectorAll('.recharts-label')).map(label => label.textContent);
+
+    it.each([0, 1])('should render label={%s} on an axis and a ReferenceLine', value => {
+      const { container } = rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis label={value} />
+          <Line dataKey="uv" />
+          <ReferenceLine y={300} label={value} />
+        </LineChart>,
+      );
+
+      expect(getLabelTexts(container)).toEqual([String(value), String(value)]);
+    });
+
+    it.each([false, ''])('should not render label={%j}', value => {
+      const { container } = rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis label={value} />
+          <Line dataKey="uv" />
+          <ReferenceLine y={300} label={value} />
+        </LineChart>,
+      );
+
+      expect(getLabelTexts(container)).toEqual([]);
+    });
+  });
+
   describe('custom label on an axis', () => {
     it('should provide computed x and y coordinates to a custom label element', () => {
       const received: Array<LabelProps> = [];

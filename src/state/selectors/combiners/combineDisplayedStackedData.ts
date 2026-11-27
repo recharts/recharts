@@ -43,12 +43,7 @@ export function combineDisplayedStackedData(
           ? index
           : String(getValueByDataKey(entry, tooltipDataKey, null));
       const numericValue = getValueByDataKey(entry, item.dataKey, 0);
-      let curr;
-      if (knownItemsByDataKey.has(tooltipValue)) {
-        curr = knownItemsByDataKey.get(tooltipValue)!;
-      } else {
-        curr = {};
-      }
+      const curr: DisplayedStackedDataPoint = knownItemsByDataKey.get(tooltipValue) ?? {};
       Object.assign(curr, { [stackIdentifier]: numericValue });
       knownItemsByDataKey.set(tooltipValue, curr);
     });

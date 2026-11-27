@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
@@ -488,4 +488,4 @@ export const {
   setKeyboardInteraction,
 } = tooltipSlice.actions;
 
-export const tooltipReducer = tooltipSlice.reducer;
+export const tooltipReducer: Reducer<TooltipState> = tooltipSlice.reducer;

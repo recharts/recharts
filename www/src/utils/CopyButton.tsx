@@ -3,11 +3,20 @@ import { SuccessIcon } from './SuccessIcon.tsx';
 import { CopyIcon } from './CopyIcon.tsx';
 import { sendEvent } from '../components/analytics.ts';
 
-export function CopyButton({ getValueToCopy }: { getValueToCopy: () => unknown }) {
+export function CopyButton({
+  getValueToCopy,
+  className = 'codemirror-toolbar-item',
+}: {
+  getValueToCopy: () => unknown;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     const valueToCopy = getValueToCopy();
+    if (typeof valueToCopy === 'string') {
+      return navigator.clipboard.writeText(valueToCopy);
+    }
     if (valueToCopy !== undefined) {
       return navigator.clipboard.writeText(JSON.stringify(valueToCopy, null, 2));
     }
@@ -36,9 +45,9 @@ export function CopyButton({ getValueToCopy }: { getValueToCopy: () => unknown }
       });
   };
   return (
-    <button onClick={onClick} className="codemirror-toolbar-item" type="button">
+    <button onClick={onClick} className={className} type="button">
       {copied ? <SuccessIcon /> : <CopyIcon />}
-      Copy to clipboard
+      <span className="codemirror-toolbar-label">Copy to clipboard</span>
     </button>
   );
 }

@@ -56,7 +56,7 @@ describe('PolarRadiusAxis theme', () => {
     expect(axisLine).toHaveAttribute('stroke-opacity', '0.7');
     expect(axisLine).toHaveAttribute('stroke-dasharray', '4 2');
     expect(tick).toHaveAttribute('fill', 'rebeccapurple');
-    expect(tick).toHaveStyle({ fontSize: '17px', fontWeight: 'bold' });
+    expect(tick).toHaveStyle({ fontSize: '17px', fontWeight: '700' });
   });
 
   it('gives explicit props precedence and merges explicit text styles with the theme', () => {
@@ -80,7 +80,7 @@ describe('PolarRadiusAxis theme', () => {
     expect(axisLine).toHaveAttribute('stroke', 'darkorange');
     expect(axisLine).toHaveAttribute('stroke-width', '5');
     expect(tick).toHaveAttribute('fill', 'darkorange');
-    expect(tick).toHaveStyle({ fontSize: '17px', fontWeight: 'bold', fontStyle: 'italic' });
+    expect(tick).toHaveStyle({ fontSize: '17px', fontWeight: '700', fontStyle: 'italic' });
   });
 
   it('does not restore legacy styles when the provider has no axis slice', () => {

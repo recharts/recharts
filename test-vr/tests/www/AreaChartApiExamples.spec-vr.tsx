@@ -18,7 +18,11 @@ testWithThemes('TinyAreaChart', async ({ mountStory }) => {
 
 testWithThemes('SynchronizedAreaChart', async ({ mountStory }) => {
   const component = await mountStory('www/AreaChartApiExamples/SynchronizedAreaChart');
-  await expect(component).toHaveScreenshot();
+  /*
+   * Since Playwright 1.65, WebKit anti-aliases this chart's axis tick labels slightly differently
+   * from run to run (up to ~200 pixels, all at text edges). Allow that much without hiding real changes.
+   */
+  await expect(component).toHaveScreenshot({ maxDiffPixels: 300 });
 });
 
 testWithThemes('PercentAreaChart', async ({ mountStory }) => {

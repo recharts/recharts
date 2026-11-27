@@ -284,6 +284,15 @@ describe('getNiceTickValues', () => {
       expect(scales).toEqual([-100, Infinity, Infinity, Infinity, Infinity]);
     });
 
+    it('should always return at least two ticks for an infinite domain', () => {
+      // `count` is clamped to a minimum of 2, so the Infinity branch must use it too.
+      // Passing 0 or 1 used to build Array(-1) (RangeError) or a single-element array.
+      expect(getNiceTickValues([0, Infinity], 0)).toEqual([0, Infinity]);
+      expect(getNiceTickValues([0, Infinity], 1)).toEqual([0, Infinity]);
+      expect(getNiceTickValues([-Infinity, 100], 0)).toEqual([-Infinity, 100]);
+      expect(getNiceTickValues([-Infinity, 100], 1)).toEqual([-Infinity, 100]);
+    });
+
     it('should return correct ticks with very small values [0, 0.000013202017268238587, 5]', () => {
       const scales = getNiceTickValues([0, 0.000013202017268238587], 5);
       expect(scales).toEqual([0, 0.0000035, 0.000007, 0.0000105, 0.000014]);

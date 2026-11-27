@@ -2,7 +2,6 @@ import * as React from 'react';
 import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 import get from 'es-toolkit/compat/get';
 
-import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
@@ -10,6 +9,7 @@ import { Curve, Props as CurveProps } from '../shape/Curve';
 import { Sector } from '../shape/Sector';
 import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
+import { clsx } from '../util/clsx';
 import { findAllByType } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';

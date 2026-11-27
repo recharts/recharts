@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { EventThrottlingProps } from '../util/types';
 
@@ -26,4 +26,4 @@ const eventSettingsSlice = createSlice({
 
 export const { setEventSettings } = eventSettingsSlice.actions;
 
-export const eventSettingsReducer = eventSettingsSlice.reducer;
+export const eventSettingsReducer: Reducer<Required<EventThrottlingProps>> = eventSettingsSlice.reducer;

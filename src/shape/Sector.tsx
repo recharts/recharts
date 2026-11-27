@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { RechartsFill } from '../fill/RechartsFill';
 import { FillObjectPaint } from '../fill/fillDefinitions';
 import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';

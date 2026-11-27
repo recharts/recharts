@@ -127,7 +127,7 @@ jobs:
       # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
       # Make sure to grab the latest version of the Playwright image
       # https://playwright.dev/docs/docker#pull-the-image
-      image: mcr.microsoft.com/playwright:v1.62.1-jammy
+      image: mcr.microsoft.com/playwright:v1.65.1-jammy
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
       # /root home is required to allow Firefox to run in the container
@@ -201,6 +201,9 @@ jobs:
     steps:
       - name: Checkout Recharts Repository
         uses: actions/checkout@v7
+        with:
+          # The ESLint suppressions check needs HEAD^1.
+          fetch-depth: 2
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -226,12 +229,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Compare against the first parent of the checked-out commit, not against the latest main.
+      # On pull_request, HEAD is GitHub's merge commit and HEAD^1 is exactly the main it was merged with,
+      # so a PR that reduced suppressions landing on main meanwhile cannot fail this PR. On push, HEAD^1 is the previous main.
       - name: Check that ESLint suppressions did not grow
-        env:
-          BASE_REF: ${{ github.base_ref || 'main' }}
-        run: |
-          git fetch --depth=1 origin "$BASE_REF"
-          npm run check-eslint-suppressions -- FETCH_HEAD
+        run: npm run check-eslint-suppressions -- HEAD^1
 
       - name: Verify Public Exports
         run: npm run test-exports
@@ -468,7 +470,7 @@ jobs:
     needs: [build]
     container:
       # Run directly in the Playwright image — no Docker-in-Docker needed.
-      image: mcr.microsoft.com/playwright:v1.62.1-jammy
+      image: mcr.microsoft.com/playwright:v1.65.1-jammy
     env:
       HOME: /root
     strategy:

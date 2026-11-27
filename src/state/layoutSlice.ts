@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { LayoutType, Margin, Size } from '../util/types';
 
 type ChartLayoutState = {
@@ -46,4 +46,4 @@ const chartLayoutSlice = createSlice({
 
 export const { setMargin, setLayout, setChartSize, setScale } = chartLayoutSlice.actions;
 
-export const chartLayoutReducer = chartLayoutSlice.reducer;
+export const chartLayoutReducer: Reducer<ChartLayoutState> = chartLayoutSlice.reducer;

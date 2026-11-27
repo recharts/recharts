@@ -94,11 +94,9 @@ by story id with the `mountStory` fixture. See `test-vr/README.md` for details.
 The Playwright mount page at `/gallery/index.html` is intentionally blank until a test calls
 `window.mount`; it is not a human-facing story index.
 
-New VR specs should import `testWithThemes` from `test-vr/tests/fixtures`. Each
-test runs in legacy, light, and dark projects for Chromium, Firefox, and
-WebKit. The legacy `test` export remains available for existing specs during
-incremental migration and preserves the current browser-only snapshot names.
-Do not pass a Recharts theme through story props or test titles. Use
+VR specs import `testWithThemes` from `test-vr/tests/fixtures`. Each test runs
+in legacy, light, and dark projects for Chromium, Firefox, and WebKit. Do not
+pass a Recharts theme through story props or test titles. Use
 `testWithThemes.use({ rechartsThemes: [...] })` or
 `@recharts-theme-legacy`, `@recharts-theme-light`, and
 `@recharts-theme-dark` tags for intentional exceptions. These selectors control
@@ -162,11 +160,10 @@ npm run test-vr:update -- test-vr/tests/ThemeVariants.spec-vr.tsx
 npm run test-vr:update -- --project=chromium-light --grep="LineChart"
 ```
 
-New `testWithThemes` specs add light and dark snapshots while retaining the
-legacy browser snapshots. Existing `test` specs must not receive new theme
-baselines until they are explicitly migrated. Commit intentional files created
-in `test-vr/__snapshots__`; do not commit `test-results` or
-`playwright-report`.
+Each test gets a legacy snapshot named after the browser project (for example
+`chromium`) plus light and dark snapshots from the `-light` and `-dark`
+projects. Commit intentional files created in `test-vr/__snapshots__`; do not
+commit `test-results` or `playwright-report`.
 
 ### See VR test results
 

@@ -9,13 +9,16 @@
  * Totals are compared per rule, not per file, so that moving code from one file to another stays possible.
  *
  * Usage: node scripts/check-eslint-suppressions.mjs [base-revision]
- * The base revision defaults to `origin/main`.
+ * The base revision defaults to the merge base of HEAD and `origin/main`, i.e. the commit this branch started from,
+ * so that suppressions removed on main after branching do not count as an increase on this branch.
+ * CI passes `HEAD^1` instead: there HEAD is GitHub's PR merge commit and its first parent is the main it merged.
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const suppressionsFile = 'eslint-suppressions.json';
-const baseRevision = process.argv[2] ?? 'origin/main';
+const baseRevision =
+  process.argv[2] ?? execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], { encoding: 'utf8' }).trim();
 
 /**
  * @param {Record<string, Record<string, { count: number }>>} suppressions
