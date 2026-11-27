@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1020502,
-    "totalSizeLabel": "996.58 KB",
+    "totalSize": 1022211,
+    "totalSizeLabel": "998.25 KB",
     "moduleCount": 387,
-    "generatedAt": "2026-11-27T18:45:44.387Z",
+    "generatedAt": "2026-11-27T20:00:40.924Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1675633,
+        "bytes": 1678845,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1023429,
-        "humanReadableSize": "999.44 KB",
+        "bytes": 1025138,
+        "humanReadableSize": "1001.11 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327636,
-        "humanReadableSize": "319.96 KB",
-        "reductionFromBaselinePercent": 67.99
+        "bytes": 328240,
+        "humanReadableSize": "320.55 KB",
+        "reductionFromBaselinePercent": 67.98
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107466,
-        "humanReadableSize": "104.95 KB",
+        "bytes": 107681,
+        "humanReadableSize": "105.16 KB",
         "reductionFromBaselinePercent": 89.5
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1020502,
+      "value": 1022211,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 615547,
+          "value": 617256,
           "children": [
             {
               "name": "state",
@@ -452,12 +452,12 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 125162,
+              "value": 125313,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 16234,
+                  "value": 16385,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
@@ -467,7 +467,7 @@
                     {
                       "name": "createCategoricalInverse.ts",
                       "fullPath": "src/util/scale/createCategoricalInverse.ts",
-                      "value": 1964
+                      "value": 2115
                     },
                     {
                       "name": "RechartsScale.ts",
@@ -982,12 +982,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 16842,
+              "value": 18400,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12470
+                  "value": 14028
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -2655,45 +2655,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1020502,
-    "totalSizeLabel": "996.58 KB",
+    "totalSize": 1022211,
+    "totalSizeLabel": "998.25 KB",
     "moduleCount": 387,
-    "generatedAt": "2026-11-27T18:45:46.812Z",
+    "generatedAt": "2026-11-27T20:00:42.635Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1675633,
+        "bytes": 1678845,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1023429,
-        "humanReadableSize": "999.44 KB",
+        "bytes": 1025138,
+        "humanReadableSize": "1001.11 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327636,
-        "humanReadableSize": "319.96 KB",
-        "reductionFromBaselinePercent": 67.99
+        "bytes": 328240,
+        "humanReadableSize": "320.55 KB",
+        "reductionFromBaselinePercent": 67.98
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107466,
-        "humanReadableSize": "104.95 KB",
+        "bytes": 107681,
+        "humanReadableSize": "105.16 KB",
         "reductionFromBaselinePercent": 89.5
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1020502,
+      "value": 1022211,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 615547,
+          "value": 617256,
           "children": [
             {
               "name": "state",
@@ -3106,12 +3106,12 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 125162,
+              "value": 125313,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 16234,
+                  "value": 16385,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
@@ -3121,7 +3121,7 @@
                     {
                       "name": "createCategoricalInverse.ts",
                       "fullPath": "src/util/scale/createCategoricalInverse.ts",
-                      "value": 1964
+                      "value": 2115
                     },
                     {
                       "name": "RechartsScale.ts",
@@ -3636,12 +3636,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 16842,
+              "value": 18400,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12470
+                  "value": 14028
                 },
                 {
                   "name": "CartesianChart.tsx",
