@@ -1,7 +1,7 @@
 import { TooltipIndex, TooltipInteractionState } from '../../tooltipSlice';
 import { ChartData } from '../../chartDataSlice';
 import { isWellBehavedNumber } from '../../../util/isWellBehavedNumber';
-import { DataKey, CategoricalDomain, NumberDomain } from '../../../util/types';
+import { DataKey, CategoricalDomain, NumberDomain, TickItem, TooltipEventType } from '../../../util/types';
 import { getValueByDataKey } from '../../../util/ChartUtils';
 import { isWellFormedNumberDomain } from '../../../util/isDomainSpecifiedByUser';
 
@@ -32,7 +32,7 @@ function isValueWithinNumberDomain(value: unknown, domain: NumberDomain): boolea
 }
 
 function isValueWithinDomain(
-  entry: unknown,
+  value: unknown,
   axisDataKey: DataKey<unknown> | undefined,
   domain: NumberDomain | CategoricalDomain | undefined,
 ): boolean {
@@ -40,7 +40,6 @@ function isValueWithinDomain(
     return true;
   }
 
-  const value = getValueByDataKey(entry, axisDataKey);
   if (value == null) {
     return true;
   }
@@ -54,7 +53,9 @@ function isValueWithinDomain(
 
 export const combineActiveTooltipIndex = (
   tooltipInteraction: TooltipInteractionState | undefined,
+  tooltipEventType: TooltipEventType | undefined,
   chartData: ChartData,
+  tooltipAxisTicks: ReadonlyArray<TickItem> | undefined,
   axisDataKey?: DataKey<unknown>,
   domain?: NumberDomain | CategoricalDomain,
 ): TooltipIndex | null => {
@@ -76,19 +77,38 @@ export const combineActiveTooltipIndex = (
   const lowerLimit = 0;
   let upperLimit: number = +Infinity;
 
-  if (chartData.length > 0) {
-    upperLimit = chartData.length - 1;
+  /*
+   * An `axis` interaction indexes the tooltip ticks, so an index beyond the last tick is the last tick.
+   * Where there are no ticks, it indexes the rows of the displayed data.
+   * An `item` interaction indexes the data of the hovered item, which neither the ticks nor the displayed data are,
+   * so it keeps the upper bound of the displayed data.
+   */
+  const indexesTicks = tooltipEventType !== 'item' && tooltipAxisTicks != null && tooltipAxisTicks.length > 0;
+  const indexSpace = indexesTicks ? tooltipAxisTicks : chartData;
+
+  if (indexSpace.length > 0) {
+    upperLimit = indexSpace.length - 1;
   }
 
   // now let's clamp the desiredIndex between the limits
   const clampedIndex = Math.max(lowerLimit, Math.min(indexAsNumber, upperLimit));
+
   const entry = chartData[clampedIndex];
 
-  if (entry == null) {
+  /*
+   * With the data on the chart, the tick and the row at one index are the same.
+   * With data on several graphical items, a tick can be a category that the row at that index shares with another item,
+   * and then the value of the tick itself is the one that is inside the domain or outside of it.
+   */
+  const tick = tooltipEventType === 'item' ? undefined : tooltipAxisTicks?.[clampedIndex];
+
+  if (tick == null && entry == null) {
     return String(clampedIndex);
   }
 
-  if (!isValueWithinDomain(entry, axisDataKey, domain)) {
+  const value = tick == null ? getValueByDataKey(entry, axisDataKey) : tick.value;
+
+  if (!isValueWithinDomain(value, axisDataKey, domain)) {
     return null;
   }
 

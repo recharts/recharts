@@ -91,7 +91,14 @@ export const selectActiveIndex: (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipIndex | null = createSelector(
-  [selectTooltipInteractionState, selectTooltipDisplayedData, selectTooltipAxisDataKey, selectTooltipAxisDomain],
+  [
+    selectTooltipInteractionState,
+    pickTooltipEventType,
+    selectTooltipDisplayedData,
+    selectTooltipAxisTicks,
+    selectTooltipAxisDataKey,
+    selectTooltipAxisDomain,
+  ],
   combineActiveTooltipIndex,
 );
 

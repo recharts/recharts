@@ -391,6 +391,68 @@ export const combineGraphicalItemsData = (cartesianItems: ReadonlyArray<Graphica
     .flat(1);
 
 /**
+ * How many rows each graphical item adds to {@link combineGraphicalItemsData}:
+ * the length of the `data` of every item that defines its own, in the same order.
+ */
+export const getItemDataLengths = (
+  graphicalItems: ReadonlyArray<Pick<GraphicalItemSettings, 'data'>>,
+): ReadonlyArray<number> => graphicalItems.flatMap(item => (item.data == null ? [] : [item.data.length]));
+
+/**
+ * Graphical items that define their own `data` have those arrays concatenated into one, see {@link combineDisplayedData}.
+ * On a categorical axis, the same category in two of those arrays is one category: two series that both have a point
+ * on "Tuesday" share that tick. A category repeated within one array, on the other hand, is a repeated category,
+ * which `allowDuplicatedCategory` gives a tick of its own to, and it keeps it.
+ *
+ * So this leaves out of every array the categories that an array before it has. The repeats of such a category within the
+ * array are left out as well: the array that has the category first brings the ticks, one for each of its own repeats, and
+ * the points of the other arrays take those. With a single array there is nothing to share and the values are returned
+ * as they are. The same goes for values whose number differs from the total length of the arrays, because those did not
+ * come from the arrays.
+ *
+ * @param appliedValues values read with the dataKey of a categorical axis, from the rows of the data arrays, one array after the other
+ * @param dataLengths length of each data array, see {@link getItemDataLengths}
+ * @returns applied values without the categories that repeat from one array to the next
+ */
+export const mergeCategoriesOfItemData = (
+  appliedValues: AppliedChartData,
+  dataLengths: ReadonlyArray<number>,
+): AppliedChartData => {
+  const lengths = dataLengths.filter(length => length > 0);
+  const total = lengths.reduce((sum: number, length: number) => sum + length, 0);
+  if (lengths.length < 2 || total !== appliedValues.length) {
+    return appliedValues;
+  }
+  const seenBefore = new Set<unknown>();
+  // the categories that no array before this one has
+  const newInArray = new Set<unknown>();
+  const merged: Array<{ value: unknown }> = [];
+  let start = 0;
+  for (const length of lengths) {
+    const arrayValues = appliedValues.slice(start, start + length);
+    start += length;
+    newInArray.clear();
+    for (const appliedValue of arrayValues) {
+      const { value } = appliedValue;
+      if (value == null) {
+        /*
+         * A row without a category gets no tick either way, so it is left to the callers that know what to do with it.
+         */
+        merged.push(appliedValue);
+      } else if (!seenBefore.has(value)) {
+        merged.push(appliedValue);
+        seenBefore.add(value);
+        newInArray.add(value);
+      } else if (newInArray.has(value)) {
+        // a category repeated within the array that brings its ticks, which gets a tick of its own
+        merged.push(appliedValue);
+      }
+    }
+  }
+  return merged;
+};
+
+/**
  * Returns true if at least one graphical item does not define its own `data` prop
  * and therefore relies on the chart-level data.
  * This is used to decide whether to merge chart-level data into the axis domain calculation.
@@ -472,7 +534,11 @@ export const combineAppliedValues = (
     return Array.from(dataKeys).flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
   }
   if (axisSettings?.dataKey != null) {
-    return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
+    const appliedValues = data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
+    if (isValueAxis(layout, axisType)) {
+      return appliedValues;
+    }
+    return mergeCategoriesOfItemData(appliedValues, getItemDataLengths(items));
   }
   if (items.length > 0) {
     return items
@@ -508,7 +574,11 @@ export const combineAllAppliedValues = (
     const chartAppliedValues: AppliedChartData = chartDataSlice
       .map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }))
       .filter(av => av.value != null);
-    return [...chartAppliedValues, ...appliedValues];
+    // The chart data is one more array next to the arrays of the items, and shares its categories with them.
+    return mergeCategoriesOfItemData(
+      [...chartAppliedValues, ...appliedValues],
+      [chartAppliedValues.length, appliedValues.length],
+    );
   }
   return appliedValues;
 };

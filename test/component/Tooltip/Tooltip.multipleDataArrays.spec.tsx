@@ -4,16 +4,27 @@
  */
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
-import { ComposedChart, Legend, Line, Tooltip, useActiveTooltipDataPoints, XAxis, YAxis } from '../../../src';
+import {
+  Bar,
+  BarChart,
+  ComposedChart,
+  Legend,
+  Line,
+  Tooltip,
+  TooltipContentProps,
+  useActiveTooltipDataPoints,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import { expectLines } from '../../helper/expectLine';
 import {
   selectAxisScale,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
 } from '../../../src/state/selectors/axisSelectors';
-import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
+import { selectActiveTooltipIndex, selectTooltipAxisTicks } from '../../../src/state/selectors/tooltipSelectors';
 import { expectTooltipPayload, showTooltipOnCoordinate } from './tooltipTestHelpers';
 import { composedChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
@@ -240,6 +251,163 @@ describe('Tooltip in chart with multiple data arrays', () => {
       showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 333.75, clientY: 100 });
       expectTooltipPayload(container, 'c', ['A : 3', 'B : 10']);
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+    });
+  });
+
+  describe('when every series has a point at every category', () => {
+    // https://github.com/recharts/recharts/issues/4687
+    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun'];
+    const pageViews = months.map(month => ({ month, views: months.indexOf(month) + 2 }));
+    const visitors = months.map(month => ({ month, visitors: 2 * (months.indexOf(month) + 2) }));
+    const clicks = months.map(month => ({ month, clicks: 3 * (months.indexOf(month) + 2) }));
+    const seriesData = [pageViews, visitors, clicks];
+    // the coordinate of the tick of each category
+    const tickCoordinates = [65, 151, 237, 323, 409, 495];
+
+    const renderTestCase = (content?: TooltipContentProps['content']) =>
+      createSelectorTestCase(({ children }) => (
+        <ComposedChart width={500} height={300}>
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip content={content} />
+          <Line dataKey="views" name="Page views" data={pageViews} />
+          <Line dataKey="visitors" name="Visitors" data={visitors} />
+          <Line dataKey="clicks" name="Clicks" data={clicks} />
+          {children}
+        </ComposedChart>
+      ));
+
+    it('should give the axis one tick per category, not one per data point', () => {
+      const { spy } = renderTestCase()(selectTooltipAxisTicks);
+
+      expectLastCalledWith(
+        spy,
+        months.map((month, index) => ({ coordinate: tickCoordinates[index], value: month, index, offset: 0 })),
+      );
+    });
+
+    it('should draw every series across the whole axis', () => {
+      const { container } = renderTestCase()();
+
+      expectLines(container, [
+        { d: 'M65,243.333L151,232.5L237,221.667L323,210.833L409,200L495,189.167' },
+        { d: 'M65,221.667L151,200L237,178.333L323,156.667L409,135L495,113.333' },
+        { d: 'M65,200L151,167.5L237,135L323,102.5L409,70L495,37.5' },
+      ]);
+    });
+
+    it('should select an activeTooltipIndex that is an index into the data of every series', () => {
+      const { container, spy } = renderTestCase()(selectActiveTooltipIndex);
+      expectLastCalledWith(spy, null);
+
+      tickCoordinates.forEach((clientX, index) => {
+        showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX, clientY: 100 });
+        expectLastCalledWith(spy, String(index));
+      });
+    });
+
+    it('should show the values of the hovered category from every series', () => {
+      const { container } = renderTestCase()();
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 323, clientY: 100 });
+      expectTooltipPayload(container, 'apr', ['Clicks : 15', 'Page views : 5', 'Visitors : 10']);
+    });
+
+    it('should pass an activeIndex to the tooltip content that reads the hovered category out of the data of every series', () => {
+      const content = vi.fn((_props: TooltipContentProps) => <div />);
+      const { container } = renderTestCase(content)();
+
+      const hoveredCategories: ReadonlyArray<[number, number]> = [
+        // clientX of the hover, index of the category
+        [65, 0],
+        [323, 3],
+        [495, 5],
+      ];
+      hoveredCategories.forEach(([clientX, index]) => {
+        showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX, clientY: 100 });
+        const props: TooltipContentProps = content.mock.calls[content.mock.calls.length - 1][0];
+        expect(props.activeIndex).toBe(String(index));
+        expect(props.label).toBe(months[index]);
+        expect(props.payload.map(entry => entry.payload)).toEqual(seriesData.map(data => data[index]));
+      });
+    });
+
+    it('should draw the active dot of every series at the hovered category', () => {
+      const { container } = renderTestCase()();
+
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 323, clientY: 100 });
+
+      const activeDots = container.querySelectorAll('.recharts-active-dot');
+      expect(activeDots).toHaveLength(3);
+      activeDots.forEach(activeDot => {
+        const circle = activeDot.querySelector('circle');
+        assertNotNull(circle);
+        expect(circle.getAttribute('cx')).toBe('323');
+      });
+    });
+
+    it('should select an activeTooltipIndex that is an index into every series on a number axis too', () => {
+      const xValues = [10, 20, 30, 40];
+      const renderNumberAxisTestCase = createSelectorTestCase(({ children }) => (
+        <ComposedChart width={500} height={300}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="a" name="a" data={xValues.map(x => ({ x, a: x }))} />
+          <Line dataKey="b" name="b" data={xValues.map(x => ({ x, b: 10 + x }))} />
+          {children}
+        </ComposedChart>
+      ));
+      const { container, spy } = renderNumberAxisTestCase(selectActiveTooltipIndex);
+
+      [172.5, 280, 387.5, 495].forEach((clientX, index) => {
+        showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX, clientY: 100 });
+        expectLastCalledWith(spy, String(index));
+      });
+
+      expectTooltipPayload(container, '40', ['a : 40', 'b : 50']);
+    });
+  });
+
+  describe('when the data is on the chart and on a series', () => {
+    // The ticks start with the categories of the chart data, the displayed data with the rows of the series.
+    // The first point of the chart data is outside of the domain, the first point of the series is inside of it.
+    const renderTestCase = (shared: boolean) =>
+      createSelectorTestCase(({ children }) => (
+        <BarChart
+          width={500}
+          height={300}
+          data={[
+            { x: 40, a: 1 },
+            { x: 15, a: 2 },
+            { x: 25, a: 3 },
+          ]}
+        >
+          <XAxis dataKey="x" type="number" domain={[0, 30]} allowDataOverflow />
+          <YAxis />
+          <Tooltip defaultIndex="0" shared={shared} />
+          <Bar dataKey="a" />
+          <Bar
+            dataKey="b"
+            data={[
+              { x: 28, b: 1 },
+              { x: 12, b: 2 },
+            ]}
+          />
+          {children}
+        </BarChart>
+      ));
+
+    it('should read the tick at the index for an axis interaction, and leave the index out of the domain', () => {
+      const { spy } = renderTestCase(true)(selectActiveTooltipIndex);
+
+      expectLastCalledWith(spy, null);
+    });
+
+    it('should read the row of the series at the index for an item interaction', () => {
+      const { spy } = renderTestCase(false)(selectActiveTooltipIndex);
+
+      expectLastCalledWith(spy, '0');
     });
   });
 });

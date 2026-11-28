@@ -1653,6 +1653,72 @@ describe('selectAllAppliedValues', () => {
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
+  it('should leave out the categories that one graphical item shares with another', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
+        <Line data={[{ x: 3 }, { x: 2 }, { x: 4 }]} />
+        <XAxis dataKey="x" />
+        <Comp />
+      </LineChart>,
+    );
+    expectLastCalledWith(spy, [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should keep a category that is repeated within the data of one graphical item', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={[{ x: 1 }, { x: 1 }, { x: 2 }]} />
+        <Line data={[{ x: 2 }, { x: 3 }]} />
+        <XAxis dataKey="x" />
+        <Comp />
+      </LineChart>,
+    );
+    expectLastCalledWith(spy, [{ value: 1 }, { value: 1 }, { value: 2 }, { value: 3 }]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should leave out the categories that the data of a graphical item shares with the chart data', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={[{ x: 1 }, { x: 2 }]}>
+        <Line dataKey="x" />
+        <Line dataKey="x" data={[{ x: 2 }, { x: 3 }]} />
+        <XAxis dataKey="x" />
+        <Comp />
+      </LineChart>,
+    );
+    expectLastCalledWith(spy, [{ value: 1 }, { value: 2 }, { value: 3 }]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
   it('should return data defined in the chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {

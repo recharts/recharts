@@ -291,15 +291,34 @@ describe('calculateActiveTickIndex', () => {
     { coordinate: 15, index: 3, value: 'd', offset: 0 },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
-    expect(calculateActiveTickIndex(12, ticks, [], 'radiusAxis', [0, 100])).toBe(1);
+    expect(calculateActiveTickIndex(12, ticks, ticks, 'radiusAxis', [0, 100])).toBe(1);
   });
 
   it('calculateActiveTickIndex(-1, ticks) should return 0', () => {
-    expect(calculateActiveTickIndex(-1, ticks, [], 'radiusAxis', [0, 100])).toBe(0);
+    expect(calculateActiveTickIndex(-1, ticks, ticks, 'radiusAxis', [0, 100])).toBe(0);
   });
 
   it('calculateActiveTickIndex(16, ticks) should return 3', () => {
-    expect(calculateActiveTickIndex(16, ticks, [], 'radiusAxis', [0, 100])).toBe(3);
+    expect(calculateActiveTickIndex(16, ticks, ticks, 'radiusAxis', [0, 100])).toBe(3);
+  });
+
+  describe('with ticks that tick generation has dropped entries from', () => {
+    /*
+     * The ticks of a `type="number"` axis with the values `['bad', 5, 20, 6]` and the domain `[0, 10]`:
+     * `'bad'` cannot be mapped and is dropped, so `TickItem.index` is no longer the position in the array,
+     * and the coordinates are not in the array order either because `20` lies beyond the domain.
+     */
+    const unsortedTicks: ReadonlyArray<TickItem> = [
+      { coordinate: 280, index: 1, value: 5, offset: 0 },
+      { coordinate: 910, index: 2, value: 20, offset: 0 },
+      { coordinate: 322, index: 3, value: 6, offset: 0 },
+    ];
+    const sortedTicks = [...unsortedTicks].sort((a, b) => a.coordinate - b.coordinate);
+
+    it('should return the position in the unsorted ticks, not the tick index', () => {
+      expect(calculateActiveTickIndex(281, sortedTicks, unsortedTicks, 'xAxis', [0, 500])).toBe(0);
+      expect(calculateActiveTickIndex(323, sortedTicks, unsortedTicks, 'xAxis', [0, 500])).toBe(2);
+    });
   });
 
   describe('on a full-circle angle axis with offset-shifted ticks', () => {

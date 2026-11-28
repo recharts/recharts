@@ -19,7 +19,7 @@ export const getActiveCartesianCoordinate = (
   activeIndex: number | undefined,
   pointer: RelativePointer,
 ): Coordinate => {
-  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
+  const entry = activeIndex == null ? undefined : tooltipTicks[activeIndex];
 
   if (entry) {
     if (layout === 'horizontal') {
@@ -51,7 +51,7 @@ export const getActivePolarCoordinate = (
   activeIndex: number | undefined,
   rangeObj: RangeObj,
 ): PolarCoordinate => {
-  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
+  const entry = activeIndex == null ? undefined : tooltipTicks[activeIndex];
 
   if (entry) {
     if (layout === 'centric') {
@@ -97,14 +97,22 @@ export function isInCartesianRange(pointer: RelativePointer, offset: ChartOffset
   return x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 }
 
+/**
+ * The index returned is the position of the tick in `unsortedTicks`, which is the index space of everything that reads the tooltip index:
+ * the active index resolver, the label, the coordinate of a keyboard step and the payload.
+ * It is not `TickItem.index`: that is the position before tick generation dropped the entries the scale cannot map,
+ * so the two differ wherever an entry was dropped.
+ *
+ * @param coordinate
+ * For different layouts, `coordinate` is different:
+ * In horizontal layout, this is expected to be the `x` coordinate
+ * vertical -> y
+ * centric -> angle
+ * radial -> radius
+ * @param ticks The ticks sorted by coordinate
+ * @param unsortedTicks The ticks in the order the index space is laid out on
+ */
 export const calculateActiveTickIndex = (
-  /**
-   * For different layouts, `coordinate` is different:
-   * In horizontal layout, this is expected to be the `x` coordinate
-   * vertical -> y
-   * centric -> angle
-   * radial -> radius
-   */
   coordinate: number | undefined,
   ticks: ReadonlyArray<TickItem> | undefined,
   unsortedTicks: ReadonlyArray<TickItem>,
@@ -164,19 +172,20 @@ export const calculateActiveTickIndex = (
         ];
 
         if (isInside(sameInterval[0], sameInterval[1], false) || isInside(diffInterval[0], diffInterval[1], true)) {
-          return unsortedTicks[i]?.index;
+          return i;
         }
       } else {
         const minValue = Math.min(before, after);
         const maxValue = Math.max(before, after);
 
         if (isInside((minValue + cur) / 2, (maxValue + cur) / 2, false)) {
-          return unsortedTicks[i]?.index;
+          return i;
         }
       }
     }
   } else if (ticks) {
     // ticks are distributed in a single direction
+    const positionInUnsortedTicks = new Map<TickItem, number>(unsortedTicks.map((tick, position) => [tick, position]));
     for (let i = 0; i < len; i++) {
       const curr = ticks[i];
       if (curr == null) {
@@ -186,11 +195,11 @@ export const calculateActiveTickIndex = (
       const prev = ticks[i - 1];
 
       if (i === 0 && next != null && coordinate <= (curr.coordinate + next.coordinate) / 2) {
-        return curr.index;
+        return positionInUnsortedTicks.get(curr);
       }
 
       if (i === len - 1 && prev != null && coordinate > (curr.coordinate + prev.coordinate) / 2) {
-        return curr.index;
+        return positionInUnsortedTicks.get(curr);
       }
 
       if (
@@ -201,7 +210,7 @@ export const calculateActiveTickIndex = (
         coordinate > (curr.coordinate + prev.coordinate) / 2 &&
         coordinate <= (curr.coordinate + next.coordinate) / 2
       ) {
-        return curr.index;
+        return positionInUnsortedTicks.get(curr);
       }
     }
   }

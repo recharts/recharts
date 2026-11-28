@@ -91,8 +91,10 @@ function useTooltipSyncEventsListener() {
            * That is not true when the axes have different scales - for example LineChart puts points
            * on the edges of the plot area, while BarChart puts them in the middle of each band.
            * So along the tooltip axis, snap to where this chart renders the synchronised index.
+           * The synchronised index is the position in the ticks, the index space the label and the payload read too,
+           * not `TickItem.index`, which differs from the position where tick generation dropped an entry.
            */
-          const activeTick = tooltipTicks?.find(tick => String(tick.index) === String(action.payload.index));
+          const activeTick = tooltipTicks?.[Number(action.payload.index)];
           if (activeTick != null) {
             if (layout === 'horizontal') {
               scaledCoordinate.x = activeTick.coordinate;
@@ -119,7 +121,7 @@ function useTooltipSyncEventsListener() {
         return;
       }
 
-      let activeTick: TickItem | undefined;
+      let activeTickPosition: number = -1;
       if (typeof syncMethod === 'function') {
         /*
          * This is what the data shape in 2.x CategoricalChartState used to look like.
@@ -134,12 +136,13 @@ function useTooltipSyncEventsListener() {
           activeCoordinate: action.payload.coordinate,
         };
         // Call a callback function. If there is an application specific algorithm
-        const activeTooltipIndex = syncMethod(tooltipTicks, syncMethodParam);
-        activeTick = tooltipTicks[activeTooltipIndex];
+        activeTickPosition = syncMethod(tooltipTicks, syncMethodParam);
       } else if (syncMethod === 'value') {
         // labels are always strings, tick.value might be a string or a number, depending on axis type
-        activeTick = tooltipTicks.find(tick => String(tick.value) === action.payload.label);
+        activeTickPosition = tooltipTicks.findIndex(tick => String(tick.value) === action.payload.label);
       }
+
+      const activeTick: TickItem | undefined = tooltipTicks[activeTickPosition];
 
       const { coordinate } = action.payload;
 
@@ -197,7 +200,11 @@ function useTooltipSyncEventsListener() {
         active: action.payload.active,
         coordinate: activeCoordinate,
         dataKey: action.payload.dataKey,
-        index: String(activeTick.index),
+        /*
+         * The index is the position of the tick in the ticks, the index space of the active index resolver, the label and the payload,
+         * not `TickItem.index`, which differs from the position where tick generation dropped an entry.
+         */
+        index: String(activeTickPosition),
         label: action.payload.label,
         sourceViewBox: action.payload.sourceViewBox,
         graphicalItemId: action.payload.graphicalItemId,
