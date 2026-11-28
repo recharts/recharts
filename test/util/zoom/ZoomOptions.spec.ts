@@ -66,7 +66,7 @@ describe('resolveZoomOptions', () => {
 });
 
 describe('zoomEnabledForDimension', () => {
-  const base = resolveZoomOptions(true)!;
+  const base = resolveZoomOptions(true);
   it('respects the axis constraint', () => {
     expect(zoomEnabledForDimension({ ...base, axis: 'xy' }, 'x')).toBe(true);
     expect(zoomEnabledForDimension({ ...base, axis: 'xy' }, 'y')).toBe(true);
