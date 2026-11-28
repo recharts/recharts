@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1022211,
-    "totalSizeLabel": "998.25 KB",
-    "moduleCount": 387,
-    "generatedAt": "2026-11-27T20:00:40.924Z",
+    "totalSize": 1026256,
+    "totalSizeLabel": "1002.20 KB",
+    "moduleCount": 389,
+    "generatedAt": "2026-11-28T05:26:06.717Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1678845,
+        "bytes": 1677213,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1025138,
-        "humanReadableSize": "1001.11 KB",
+        "bytes": 1029187,
+        "humanReadableSize": "1005.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 328240,
-        "humanReadableSize": "320.55 KB",
-        "reductionFromBaselinePercent": 67.98
+        "bytes": 329230,
+        "humanReadableSize": "321.51 KB",
+        "reductionFromBaselinePercent": 68.01
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107681,
-        "humanReadableSize": "105.16 KB",
-        "reductionFromBaselinePercent": 89.5
+        "bytes": 108214,
+        "humanReadableSize": "105.68 KB",
+        "reductionFromBaselinePercent": 89.49
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1022211,
+      "value": 1026256,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 617256,
+          "value": 616190,
           "children": [
             {
               "name": "state",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 125313,
+              "value": 126083,
               "children": [
                 {
                   "name": "scale",
@@ -521,6 +521,11 @@
                   "value": 6694
                 },
                 {
+                  "name": "useElementSize.ts",
+                  "fullPath": "src/util/useElementSize.ts",
+                  "value": 6555
+                },
+                {
                   "name": "getActiveCoordinate.ts",
                   "fullPath": "src/util/getActiveCoordinate.ts",
                   "value": 5637
@@ -539,11 +544,6 @@
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "useElementOffset.ts",
-                  "fullPath": "src/util/useElementOffset.ts",
-                  "value": 4544
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -604,11 +604,6 @@
                   "name": "CartesianUtils.ts",
                   "fullPath": "src/util/CartesianUtils.ts",
                   "value": 1319
-                },
-                {
-                  "name": "getContentBoxSize.ts",
-                  "fullPath": "src/util/getContentBoxSize.ts",
-                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
@@ -821,7 +816,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 66535,
+              "value": 66788,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -841,7 +836,7 @@
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
-                  "value": 8379
+                  "value": 8632
                 },
                 {
                   "name": "LabelList.tsx",
@@ -982,12 +977,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 18400,
+              "value": 16311,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 14028
+                  "value": 11939
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -1200,7 +1195,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 403914,
+          "value": 409025,
           "children": [
             {
               "name": "@reduxjs",
@@ -1257,17 +1252,17 @@
             {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 62028,
+              "value": 67139,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 62028,
+                  "value": 67139,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 38047,
+                      "value": 40496,
                       "children": [
                         {
                           "name": "predicate",
@@ -1470,6 +1465,23 @@
                           ]
                         },
                         {
+                          "name": "function",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/function",
+                          "value": 2449,
+                          "children": [
+                            {
+                              "name": "throttle.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/function/throttle.mjs",
+                              "value": 1453
+                            },
+                            {
+                              "name": "debounce.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/function/debounce.mjs",
+                              "value": 996
+                            }
+                          ]
+                        },
+                        {
                           "name": "math",
                           "fullPath": "node_modules/es-toolkit/dist/compat/math",
                           "value": 1045,
@@ -1543,27 +1555,15 @@
                       ]
                     },
                     {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 2164,
-                      "children": [
-                        {
-                          "name": "uniqBy.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
-                          "value": 1199
-                        },
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
-                      "value": 2024,
+                      "value": 4686,
                       "children": [
+                        {
+                          "name": "debounce.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/debounce.mjs",
+                          "value": 2662
+                        },
                         {
                           "name": "once.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/once.mjs",
@@ -1583,6 +1583,23 @@
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
                           "value": 250
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
                         }
                       ]
                     },
@@ -2655,45 +2672,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1022211,
-    "totalSizeLabel": "998.25 KB",
-    "moduleCount": 387,
-    "generatedAt": "2026-11-27T20:00:42.635Z",
+    "totalSize": 1026256,
+    "totalSizeLabel": "1002.20 KB",
+    "moduleCount": 389,
+    "generatedAt": "2026-11-28T05:26:08.591Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1678845,
+        "bytes": 1677213,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1025138,
-        "humanReadableSize": "1001.11 KB",
+        "bytes": 1029187,
+        "humanReadableSize": "1005.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 328240,
-        "humanReadableSize": "320.55 KB",
-        "reductionFromBaselinePercent": 67.98
+        "bytes": 329230,
+        "humanReadableSize": "321.51 KB",
+        "reductionFromBaselinePercent": 68.01
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107681,
-        "humanReadableSize": "105.16 KB",
-        "reductionFromBaselinePercent": 89.5
+        "bytes": 108214,
+        "humanReadableSize": "105.68 KB",
+        "reductionFromBaselinePercent": 89.49
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1022211,
+      "value": 1026256,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 617256,
+          "value": 616190,
           "children": [
             {
               "name": "state",
@@ -3106,7 +3123,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 125313,
+              "value": 126083,
               "children": [
                 {
                   "name": "scale",
@@ -3175,6 +3192,11 @@
                   "value": 6694
                 },
                 {
+                  "name": "useElementSize.ts",
+                  "fullPath": "src/util/useElementSize.ts",
+                  "value": 6555
+                },
+                {
                   "name": "getActiveCoordinate.ts",
                   "fullPath": "src/util/getActiveCoordinate.ts",
                   "value": 5637
@@ -3193,11 +3215,6 @@
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "useElementOffset.ts",
-                  "fullPath": "src/util/useElementOffset.ts",
-                  "value": 4544
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -3258,11 +3275,6 @@
                   "name": "CartesianUtils.ts",
                   "fullPath": "src/util/CartesianUtils.ts",
                   "value": 1319
-                },
-                {
-                  "name": "getContentBoxSize.ts",
-                  "fullPath": "src/util/getContentBoxSize.ts",
-                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
@@ -3475,7 +3487,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 66535,
+              "value": 66788,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -3495,7 +3507,7 @@
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
-                  "value": 8379
+                  "value": 8632
                 },
                 {
                   "name": "LabelList.tsx",
@@ -3636,12 +3648,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 18400,
+              "value": 16311,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 14028
+                  "value": 11939
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -3854,7 +3866,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 403914,
+          "value": 409025,
           "children": [
             {
               "name": "@reduxjs",
@@ -3911,17 +3923,17 @@
             {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 62028,
+              "value": 67139,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 62028,
+                  "value": 67139,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 38047,
+                      "value": 40496,
                       "children": [
                         {
                           "name": "predicate",
@@ -4124,6 +4136,23 @@
                           ]
                         },
                         {
+                          "name": "function",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/function",
+                          "value": 2449,
+                          "children": [
+                            {
+                              "name": "throttle.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/function/throttle.mjs",
+                              "value": 1453
+                            },
+                            {
+                              "name": "debounce.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/function/debounce.mjs",
+                              "value": 996
+                            }
+                          ]
+                        },
+                        {
                           "name": "math",
                           "fullPath": "node_modules/es-toolkit/dist/compat/math",
                           "value": 1045,
@@ -4197,27 +4226,15 @@
                       ]
                     },
                     {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 2164,
-                      "children": [
-                        {
-                          "name": "uniqBy.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
-                          "value": 1199
-                        },
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
-                      "value": 2024,
+                      "value": 4686,
                       "children": [
+                        {
+                          "name": "debounce.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/debounce.mjs",
+                          "value": 2662
+                        },
                         {
                           "name": "once.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/once.mjs",
@@ -4237,6 +4254,23 @@
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
                           "value": 250
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
                         }
                       ]
                     },
