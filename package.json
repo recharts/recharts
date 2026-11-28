@@ -201,7 +201,7 @@
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
     "ts-morph": "^28.0.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.42.0",
     "update-browserslist-db": "^1.1.0",
     "vite": "^6.4.0",
