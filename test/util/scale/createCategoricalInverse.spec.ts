@@ -125,3 +125,37 @@ describe('inverse category positions', () => {
     }
   });
 });
+
+// https://github.com/recharts/recharts/issues/8308
+describe('createCategoricalInverse with unordered or gapped data (#8308)', () => {
+  it('snaps to the right category when numeric categories are not in ascending order', () => {
+    // Categories listed newest first, as they appear in the data.
+    const scale = scalePoint<CategoricalDomainItem>().domain([2024, 2022, 2023, 2021]).range([0, 300]);
+    // selectSortedDataPoints sorts the values before passing them in.
+    const inverse = createCategoricalInverse(scale, [2021, 2022, 2023, 2024]);
+    expect(inverse).toBeDefined();
+    for (const year of [2021, 2022, 2023, 2024]) {
+      const position = scale(year);
+      if (position == null) {
+        throw new Error('Expected a position for every category');
+      }
+      expect(inverse?.(position)).toBe(year);
+    }
+  });
+
+  it('ignores null gaps and snaps to the real data point', () => {
+    // An axis over data [10, null, 20, 30]: the null gap is not one of the
+    // scale's categories. selectSortedDataPoints sorts nulls to the front.
+    const scale = scalePoint<CategoricalDomainItem>().domain([10, 20, 30]).range([0, 300]);
+    const inverse = createCategoricalInverse(scale, [null, 10, 20, 30]);
+    expect(inverse).toBeDefined();
+    for (const value of [10, 20, 30]) {
+      const position = scale(value);
+      if (position == null) {
+        throw new Error('Expected a position for every category');
+      }
+      // Without the fix the pixel of 10 snapped to the null gap.
+      expect(inverse?.(position)).toBe(value);
+    }
+  });
+});

@@ -41,33 +41,52 @@ export function createCategoricalInverse(
   const domain = allDataPointsOnAxis ?? scale.domain();
   // Banded scales return the start of each band, but chart categories are centered in it.
   const offset = (scale.bandwidth?.() ?? 0) / 2;
-  // Build an array of pixel positions for each domain value
-  // @ts-expect-error we're attempting to scale unknown without having guarantee that it is a Domain type
-  const pixelPositions: number[] = domain.map(d => (scale(d) ?? 0) + offset);
   const range = scale.range();
 
   if (domain.length === 0 || range.length < 2) {
     return undefined;
   }
 
+  // Pair every domain value with its pixel position, then sort by pixel.
+  // The data order is not necessarily the pixel order: a categorical axis can
+  // list its values out of numeric order (e.g. years newest first), and that
+  // listing order - not the sorted values - is what the scale maps to pixels.
+  // Sorting by pixel keeps the pixel array monotonic so that bisect, and the
+  // nearest-neighbour lookup below, return the correct point.
+  // Values with no real position are dropped: gaps (`null`/`undefined`), whose
+  // scaled value is either NaN or, on a continuous scale, a coerced pixel that
+  // belongs to no data point.
+  const points = domain
+    // @ts-expect-error we're attempting to scale unknown without having guarantee that it is a Domain type
+    .map((value: unknown) => ({ value, pixel: (scale(value) ?? NaN) + offset }))
+    .filter(point => point.value != null && Number.isFinite(point.pixel))
+    .sort((a, b) => a.pixel - b.pixel);
+
+  if (points.length === 0) {
+    return undefined;
+  }
+
+  const values: ReadonlyArray<unknown> = points.map(point => point.value);
+  const pixelPositions: ReadonlyArray<number> = points.map(point => point.pixel);
+
   return (pixelValue: number): unknown => {
-    // Find the closest domain value using bisect
+    // Find the closest point using bisect
     const index = bisect(pixelPositions, pixelValue);
 
     // Clamp to valid range
     if (index <= 0) {
-      return domain[0];
+      return values[0];
     }
-    if (index >= domain.length) {
-      return domain[domain.length - 1];
+    if (index >= values.length) {
+      return values[values.length - 1];
     }
 
     // Check which neighbor is closer
     const leftPixel = pixelPositions[index - 1] ?? 0;
     const rightPixel = pixelPositions[index] ?? 0;
     if (Math.abs(pixelValue - leftPixel) <= Math.abs(pixelValue - rightPixel)) {
-      return domain[index - 1];
+      return values[index - 1];
     }
-    return domain[index];
+    return values[index];
   };
 }
