@@ -9,7 +9,7 @@ import isEqual from 'es-toolkit/compat/isEqual';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor, isValidTextAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
-import { isNumber, noop } from '../util/DataUtils';
+import { isNumber, isNumOrStr, noop } from '../util/DataUtils';
 import {
   CartesianViewBox,
   adaptEventsOfChild,
@@ -523,12 +523,22 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     );
   });
 
+  const { label } = getTicksConfig;
+  const labelValue = label && typeof label === 'object' && 'value' in label ? label.value : label;
+  const groupName = tick && isNumOrStr(labelValue) ? String(labelValue) : undefined;
+
   return (
     <g className={`recharts-cartesian-axis-ticks recharts-${axisType}-ticks`}>
       <RenderedTicksReporter ticks={finalTicks} axisId={axisId} axisType={axisType} />
       {tickLabels.length > 0 && (
         <ZIndexLayer zIndex={DefaultZIndexes.label}>
-          <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref} style={style}>
+          <g
+            className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`}
+            ref={ref}
+            style={style}
+            role={groupName ? 'group' : undefined}
+            aria-label={groupName}
+          >
             {tickLabels}
           </g>
         </ZIndexLayer>
