@@ -1187,11 +1187,6 @@
       "count": 1
     }
   },
-  "test/util/zoom/ZoomOptions.spec.ts": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
-    }
-  },
   "types.d.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
