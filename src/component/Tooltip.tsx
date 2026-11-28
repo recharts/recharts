@@ -15,7 +15,7 @@ import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, EasingInput, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
-import { useElementOffset } from '../util/useElementOffset';
+import { useElementSize } from '../util/useElementSize';
 import { Cursor, CursorDefinition } from './Cursor';
 import {
   selectActiveCoordinate,
@@ -370,7 +370,14 @@ export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
   const finalIsActive: boolean = activeFromProps ?? isActive ?? false;
-  const [lastBoundingBox, updateBoundingBox] = useElementOffset([payload, finalIsActive]);
+  const [lastBoundingBox, updateBoundingBox] = useElementSize({
+    box: 'border-box',
+    initialSize: { width: 0, height: 0 },
+    observe: true,
+    // Ignore 1px changes, which could otherwise loop: the size of the element changes the layout around it
+    threshold: 1,
+    extraDependencies: [payload, finalIsActive],
+  });
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
   useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);

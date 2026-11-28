@@ -8,8 +8,9 @@ import {
   CartesianViewBox,
   Coordinate,
   PolarCoordinate,
+  Size,
 } from '../util/types';
-import { ElementOffset, SetElementOffset } from '../util/useElementOffset';
+import { SetMeasuredElement } from '../util/useElementSize';
 import { getTooltipTranslate } from '../util/tooltip/translate';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
@@ -28,8 +29,8 @@ export type TooltipBoundingBoxProps = {
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
   wrapperStyle: CSSProperties;
-  lastBoundingBox: ElementOffset | null;
-  innerRef: SetElementOffset;
+  lastBoundingBox: Size | null;
+  innerRef: SetMeasuredElement;
   hasPortalFromProps: boolean;
 };
 
@@ -57,7 +58,7 @@ function resolveTransitionProperty(args: {
  * @param box the last measured bounding box of the wrapper
  * @returns true if the box has both width and height
  */
-function hasSize(box: ElementOffset | null): box is ElementOffset {
+function hasSize(box: Size | null): box is Size {
   return box != null && box.width > 0 && box.height > 0;
 }
 
@@ -99,11 +100,11 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
    * so the next time the tooltip shows it would animate in from the top left corner.
    * Keep positioning with the last size that had content instead.
    */
-  const [lastBoxWithSize, setLastBoxWithSize] = React.useState<ElementOffset | null>(null);
+  const [lastBoxWithSize, setLastBoxWithSize] = React.useState<Size | null>(null);
   if (hasSize(props.lastBoundingBox) && props.lastBoundingBox !== lastBoxWithSize) {
     setLastBoxWithSize(props.lastBoundingBox);
   }
-  const tooltipBox: ElementOffset | null = hasSize(props.lastBoundingBox) ? props.lastBoundingBox : lastBoxWithSize;
+  const tooltipBox: Size | null = hasSize(props.lastBoundingBox) ? props.lastBoundingBox : lastBoxWithSize;
 
   const { cssClasses, cssProperties } = getTooltipTranslate({
     allowEscapeViewBox: props.allowEscapeViewBox,

@@ -5,6 +5,7 @@ import { ComposedChart, Line, ResponsiveContainer, useChartHeight, useChartWidth
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 
 describe('responsive prop', () => {
   let resizeObserverCallback: (entries: ResizeObserverEntry[]) => void,
@@ -382,7 +383,10 @@ describe('responsive prop', () => {
       expect(getByTestId('chart-size').textContent).toBe('500x400');
 
       act(() => {
-        resizeObserverCallback([{ contentRect: { width: 300, height: 200 } }] as ResizeObserverEntry[]);
+        // The chart reads its size from the DOM, the entry only tells it to measure again
+        mockHTMLElementProperty('clientWidth', 300);
+        mockHTMLElementProperty('clientHeight', 200);
+        resizeObserverCallback([] as ResizeObserverEntry[]);
       });
 
       expect(svg).toHaveAttribute('width', '300');
@@ -490,7 +494,10 @@ describe('responsive prop', () => {
       expect(getByTestId('chart-size').textContent).toBe('500x400');
 
       act(() => {
-        resizeObserverCallback([{ contentRect: { width: 300, height: 200 } }] as ResizeObserverEntry[]);
+        // The chart reads its size from the DOM, the entry only tells it to measure again
+        mockHTMLElementProperty('clientWidth', 300);
+        mockHTMLElementProperty('clientHeight', 200);
+        resizeObserverCallback([] as ResizeObserverEntry[]);
       });
 
       expect(svg).toHaveAttribute('width', '300');

@@ -23,12 +23,13 @@ describe('<ResponsiveContainer />', () => {
   });
 
   /**
-   * Use this function to simulate a change fired by a window.ResizeObserver
+   * Use this function to simulate a change fired by a window.ResizeObserver.
+   * It sets the element size in the DOM to `contentRect` from the first entry, then notifies.
    * You just need to pass a param with ResizeObserverEntry structure like:
    *
    * @link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
    */
-  let notifyResizeObserverChange: (arg: unknown) => void,
+  let notifyResizeObserverChange: (entries: ReadonlyArray<{ contentRect?: { width: number; height: number } }>) => void,
     consoleWarnSpy: MockInstance<(...args: any[]) => void>,
     resizeObserverMock: Mock<(arg: any) => any>;
 
@@ -42,7 +43,15 @@ describe('<ResponsiveContainer />', () => {
      * from inside our test.
      */
     resizeObserverMock = vi.fn(function ResizeObserverMock(callback) {
-      notifyResizeObserverChange = callback;
+      notifyResizeObserverChange = (entries: ReadonlyArray<{ contentRect?: { width: number; height: number } }>) => {
+        // ResponsiveContainer reads its size from the DOM, not from the entry, so resize the DOM first
+        const contentRect = entries[0]?.contentRect;
+        if (contentRect != null) {
+          mockHTMLElementProperty('clientWidth', contentRect.width);
+          mockHTMLElementProperty('clientHeight', contentRect.height);
+        }
+        callback(entries);
+      };
 
       return {
         observe: vi.fn(),

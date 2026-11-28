@@ -6,15 +6,12 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from 'react';
-import throttle from 'es-toolkit/compat/throttle';
 import { clsx } from '../util/clsx';
-import { isNumber, noop } from '../util/DataUtils';
+import { isNumber } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import {
   calculateChartDimensions,
@@ -24,7 +21,7 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { getContentBoxSize } from '../util/getContentBoxSize';
+import { useElementSize } from '../util/useElementSize';
 
 /**
  * @public
@@ -144,66 +141,25 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
     ref,
   ) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    /*
-     * We are using a ref to avoid re-creating the ResizeObserver when the onResize function changes.
-     * The ref is updated on every render, so the latest onResize function is always available in the effect.
-     */
-    const onResizeRef = useRef<Props['onResize']>();
-    onResizeRef.current = onResize;
     useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 
-    const [sizes, setSizes] = useState<{
-      containerWidth: number;
-      containerHeight: number;
-    }>({
-      containerWidth: initialDimension.width,
-      containerHeight: initialDimension.height,
+    const [{ width: containerWidth, height: containerHeight }, setMeasuredElement] = useElementSize({
+      box: 'content-box',
+      initialSize: initialDimension,
+      observe: true,
+      // Without ResizeObserver (for example in jsdom) keep initialDimension instead of measuring zero
+      measureWithoutResizeObserver: false,
+      throttleMs: debounce,
+      onResize: size => onResize?.(size.width, size.height),
     });
 
-    const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
-      setSizes(prevState => {
-        const roundedWidth = Math.round(newWidth);
-        const roundedHeight = Math.round(newHeight);
-        if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
-          return prevState;
-        }
-
-        return { containerWidth: roundedWidth, containerHeight: roundedHeight };
-      });
-    }, []);
-
-    useEffect(() => {
-      if (containerRef.current == null || typeof ResizeObserver === 'undefined') {
-        return noop;
-      }
-      let callback = (entries: ResizeObserverEntry[]) => {
-        const entry = entries[0];
-        if (entry == null) {
-          return;
-        }
-        const { width: containerWidth, height: containerHeight } = entry.contentRect;
-        setContainerSize(containerWidth, containerHeight);
-        onResizeRef.current?.(containerWidth, containerHeight);
-      };
-      if (debounce > 0) {
-        callback = throttle(callback, debounce, {
-          trailing: true,
-          leading: false,
-        });
-      }
-      const observer = new ResizeObserver(callback);
-
-      const { width: containerWidth, height: containerHeight } = getContentBoxSize(containerRef.current);
-      setContainerSize(containerWidth, containerHeight);
-
-      observer.observe(containerRef.current);
-
-      return () => {
-        observer.disconnect();
-      };
-    }, [setContainerSize, debounce]);
-
-    const { containerWidth, containerHeight } = sizes;
+    const setContainerRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        setMeasuredElement(node);
+      },
+      [setMeasuredElement],
+    );
 
     warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
@@ -237,7 +193,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
         id={id ? `${id}` : undefined}
         className={clsx('recharts-responsive-container', className)}
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
-        ref={containerRef}
+        ref={setContainerRef}
         {...others}
       >
         <div style={getInnerDivStyle({ width, height })}>

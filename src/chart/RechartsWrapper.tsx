@@ -28,7 +28,7 @@ import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getContentBoxSize } from '../util/getContentBoxSize';
+import { useElementSize } from '../util/useElementSize';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -76,122 +76,72 @@ type WrapperDivProps = HTMLAttributes<HTMLDivElement> & {
   height: number | string | undefined;
 };
 
-const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
-  const observerRef: MutableRefObject<ResizeObserver | null> = useRef(null);
+type MeasuredDivProps = WrapperDivProps & {
+  /**
+   * If true, measures again whenever the div resizes. If false, measures once when the div mounts.
+   */
+  observe: boolean;
+  /**
+   * The width to report before the first measurement.
+   */
+  initialWidth: number;
+  /**
+   * The height to report before the first measurement.
+   */
+  initialHeight: number;
+};
 
-  const [sizes, setSizes] = useState<{
-    containerWidth: number;
-    containerHeight: number;
-  }>({
-    containerWidth: getNumberOrZero(props.style?.width),
-    containerHeight: getNumberOrZero(props.style?.height),
-  });
-
-  const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
-    setSizes(prevState => {
-      const roundedWidth = Math.round(newWidth);
-      const roundedHeight = Math.round(newHeight);
-      if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
-        return prevState;
-      }
-
-      return { containerWidth: roundedWidth, containerHeight: roundedHeight };
+/**
+ * Renders the wrapper div, measures its content box, and reports that as the chart size.
+ */
+const MeasuredDiv = forwardRef<HTMLDivElement, MeasuredDivProps>(
+  ({ observe, initialWidth, initialHeight, ...props }: MeasuredDivProps, ref): ReactNode => {
+    const [size, setMeasuredElement] = useElementSize({
+      box: 'content-box',
+      initialSize: { width: initialWidth, height: initialHeight },
+      observe,
+      // Without ResizeObserver (for example in jsdom) keep the size from props instead of measuring zero
+      measureWithoutResizeObserver: false,
     });
-  }, []);
 
-  const innerRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      // 1. First, call the external ref if it was provided
-      if (typeof ref === 'function') {
-        ref(node);
-      }
+    const innerRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        if (typeof ref === 'function') {
+          ref(node);
+        }
+        setMeasuredElement(node);
+      },
+      [ref, setMeasuredElement],
+    );
 
-      // 2. Disconnect any previously active ResizeObserver instance to prevent memory leaks
-      if (observerRef.current != null) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
+    return (
+      <>
+        <ReportChartSize width={size.width} height={size.height} />
+        <div ref={innerRef} {...props} />
+      </>
+    );
+  },
+);
 
-      // 3. Initiate a new ResizeObserver on the valid DOM node
-      if (node != null && typeof ResizeObserver !== 'undefined') {
-        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
-        setContainerSize(containerWidth, containerHeight);
+const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => (
+  <MeasuredDiv
+    {...props}
+    ref={ref}
+    observe
+    initialWidth={getNumberOrZero(props.style?.width)}
+    initialHeight={getNumberOrZero(props.style?.height)}
+  />
+));
 
-        const callback = (entries: ResizeObserverEntry[]) => {
-          const entry = entries[0];
-          if (entry == null) {
-            return;
-          }
-          const { width, height } = entry.contentRect;
-          setContainerSize(width, height);
-        };
-
-        const observer = new ResizeObserver(callback);
-        observer.observe(node);
-        observerRef.current = observer;
-      }
-    },
-    [ref, setContainerSize],
-  );
-
-  useEffect(() => {
-    return () => {
-      const observer = observerRef.current;
-      if (observer != null) {
-        observer.disconnect();
-      }
-    };
-  }, [setContainerSize]);
-
-  return (
-    <>
-      <ReportChartSize width={sizes.containerWidth} height={sizes.containerHeight} />
-      <div ref={innerRef} {...props} />
-    </>
-  );
-});
-
-const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
-  const { width, height } = props;
-  const [sizes, setSizes] = useState<{
-    containerWidth: number;
-    containerHeight: number;
-  }>({
-    containerWidth: getNumberOrZero(width),
-    containerHeight: getNumberOrZero(height),
-  });
-
-  const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
-    setSizes(prevState => {
-      const roundedWidth = Math.round(newWidth);
-      const roundedHeight = Math.round(newHeight);
-      if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
-        return prevState;
-      }
-
-      return { containerWidth: roundedWidth, containerHeight: roundedHeight };
-    });
-  }, []);
-
-  const innerRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (typeof ref === 'function') {
-        ref(node);
-      }
-      if (node != null) {
-        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
-        setContainerSize(containerWidth, containerHeight);
-      }
-    },
-    [ref, setContainerSize],
-  );
-  return (
-    <>
-      <ReportChartSize width={sizes.containerWidth} height={sizes.containerHeight} />
-      <div ref={innerRef} {...props} />
-    </>
-  );
-});
+const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => (
+  <MeasuredDiv
+    {...props}
+    ref={ref}
+    observe={false}
+    initialWidth={getNumberOrZero(props.width)}
+    initialHeight={getNumberOrZero(props.height)}
+  />
+));
 
 type StaticDivProps = HTMLAttributes<HTMLDivElement> & {
   width: number;
