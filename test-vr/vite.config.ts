@@ -50,7 +50,6 @@ export default defineConfig(({ command }) => ({
        */
       react: path.join(repoRoot, 'node_modules/react'),
       'react-dom': path.join(repoRoot, 'node_modules/react-dom'),
-      'react-is': path.join(repoRoot, 'node_modules/react-is'),
     },
   },
   server: {

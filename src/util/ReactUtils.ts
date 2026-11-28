@@ -1,8 +1,7 @@
 import get from 'es-toolkit/compat/get';
 
 import * as React from 'react';
-import { Children, ReactNode } from 'react';
-import { isFragment } from 'react-is';
+import { Children, Fragment, isValidElement, ReactNode } from 'react';
 import { isNullish } from './DataUtils';
 import { ActiveDotType, DotType } from './types';
 
@@ -58,7 +57,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   let result: T[] = [];
   Children.forEach(children, child => {
     if (isNullish(child)) return;
-    if (isFragment(child)) {
+    if (isValidElement<{ children: T | T[] }>(child) && child.type === Fragment) {
       result = result.concat(toArray(child.props.children));
     } else {
       // @ts-expect-error this could still be Iterable<ReactNode> and TS does not like that
